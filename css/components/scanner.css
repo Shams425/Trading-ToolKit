@@ -1,0 +1,570 @@
+/* Header alignment fixes */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px 20px 10px;
+}
+
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.logo-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* ROW 1: SLIDABLE COLUMNS CAROUSEL */
+.scanner-row-1 {
+    width: 100%;
+    overflow: hidden;
+}
+
+.columns-scroll-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+}
+
+.columns-scroll-track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.columns-scroll-track::-webkit-scrollbar-thumb {
+    background: var(--card-border);
+    border-radius: 4px;
+}
+
+.market-col-card {
+    min-width: 280px;
+    flex: 1;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.col-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 10px;
+}
+
+.col-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.coin-mini-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.coin-mini-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    white-space: nowrap;
+    gap: 8px;
+}
+
+.coin-symbol {
+    font-weight: 700;
+    color: var(--text-primary);
+    min-width: 70px;
+}
+
+.coin-price {
+    color: var(--text-secondary);
+    margin-left: auto;
+    padding-right: 6px;
+    font-variant-numeric: tabular-nums;
+}
+
+.coin-metric,
+.coin-change {
+    font-weight: 700;
+    text-align: right;
+    min-width: 60px;
+}
+
+/* ROW 2: RADAR & INLINE RESULTS CARD (GRID SPLIT) */
+.scanner-row-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    transition: all 0.4s ease;
+}
+
+.scanner-row-2.split-active {
+    grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 800px) {
+    .scanner-row-2.split-active {
+        grid-template-columns: 1fr;
+    }
+}
+
+.radar-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    min-height: 280px;
+}
+
+/* Fix Radar Header & "Start Scan" Button Size */
+.radar-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.radar-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* Constrain button width so it never stretches across full card */
+.btn-scan-trigger {
+    background-color: var(--accent-yellow);
+    color: #000;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    border: none;
+    width: auto;
+    /* Prevents button from stretching */
+    max-width: 160px;
+    /* Hard limit on width */
+    flex-shrink: 0;
+    /* Keeps button compact */
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-scan-trigger:hover {
+    background-color: #e5bd20;
+    transform: translateY(-1px);
+}
+
+/* Fix Bot Scan Results Header & "X" Button Alignment */
+.results-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 10px;
+    margin-bottom: 8px;
+}
+
+.results-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+/* Clean, crisp alignment for the close button */
+.btn-close-results {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    margin-left: auto;
+    /* Forces X to far right edge */
+}
+
+.btn-close-results:hover {
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.radar-display {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(252, 213, 53, 0.05) 0%, rgba(0, 0, 0, 0.4) 100%);
+    border: 1px solid rgba(252, 213, 53, 0.3);
+    position: relative;
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.radar-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px dashed rgba(252, 213, 53, 0.2);
+}
+
+.ring-1 {
+    width: 130px;
+    height: 130px;
+}
+
+.ring-2 {
+    width: 80px;
+    height: 80px;
+}
+
+.ring-3 {
+    width: 30px;
+    height: 30px;
+}
+
+.radar-sweep {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    top: 0;
+    right: 0;
+    background: linear-gradient(45deg, rgba(252, 213, 53, 0.4), transparent 70%);
+    transform-origin: bottom left;
+    animation: rotateSweep 3s linear infinite;
+    border-radius: 100% 0 0 0;
+}
+
+@keyframes rotateSweep {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.radar-blip {
+    position: absolute;
+    color: var(--accent-yellow);
+    font-size: 12px;
+    animation: blipPulse 2s infinite ease-in-out;
+}
+
+.blip-1 {
+    top: 30px;
+    left: 40px;
+    animation-delay: 0s;
+}
+
+.blip-2 {
+    bottom: 40px;
+    right: 35px;
+    animation-delay: 0.7s;
+}
+
+.blip-3 {
+    top: 70px;
+    right: 50px;
+    animation-delay: 1.3s;
+}
+
+@keyframes blipPulse {
+
+    0%,
+    100% {
+        opacity: 0.2;
+        transform: scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* RESULTS CARD IN ROW 2 */
+.results-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.results-card.hidden-card {
+    display: none;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 8px;
+}
+
+.results-header h3 {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.btn-close-results {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.scanned-coins-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.scanned-item {
+    background-color: var(--bg-color);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    gap: 10px;
+}
+
+.coin-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+    margin-right: auto;
+}
+
+.item-loc {
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+.item-signal {
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.btn-add-cal {
+    background: none;
+    border: none;
+    color: var(--accent-yellow);
+    cursor: pointer;
+}
+
+/* ROW 3: TRADING CALENDAR WITH LOGOS */
+.calendar-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.calendar-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.calendar-month-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.btn-cal-nav {
+    background: var(--bg-color);
+    border: 1px solid var(--card-border);
+    color: var(--text-primary);
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.cal-day-label {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    padding-bottom: 6px;
+}
+
+.cal-day {
+    background-color: var(--bg-color);
+    border: 1px solid var(--card-border);
+    min-height: 70px;
+    border-radius: 8px;
+    padding: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.1s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.cal-day:hover {
+    border-color: var(--accent-yellow);
+    transform: translateY(-2px);
+}
+
+.cal-day.empty {
+    opacity: 0.25;
+    cursor: default;
+}
+
+.cal-day.empty:hover {
+    transform: none;
+    border-color: var(--card-border);
+}
+
+.calendar-logo-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.cal-coin-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    padding: 2px;
+    background-color: var(--card-bg);
+}
+
+.cal-coin-icon.tag-buy {
+    border: 1px solid #0ecb81;
+}
+
+.cal-coin-icon.tag-sell {
+    border: 1px solid #f6465d;
+}
+
+/* Reset flex behavior specifically for icon buttons */
+.btn-close-results,
+.btn-add-cal,
+.btn-cal-nav {
+    flex: none !important;
+    width: auto;
+}
+
+/* --- UNIFIED CARD HOVER & TRANSITIONS --- */
+
+/* Base transition for all main cards */
+.market-col-card,
+.radar-card,
+.results-card,
+.calendar-card {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: smoothFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Smooth Hub-style Hover Effect */
+.market-col-card:hover,
+.radar-card:hover,
+.results-card:hover,
+.calendar-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(252, 213, 53, 0.4);
+    /* Accent Yellow Glow */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5),
+        0 0 15px -3px rgba(252, 213, 53, 0.15);
+}
+
+/* Ensure the split results card fades in smoothly when triggered */
+.results-card {
+    animation: smoothFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Micro-hover on scanned list items inside the card */
+.scanned-item {
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.scanned-item:hover {
+    transform: translateX(4px);
+    border-color: rgba(252, 213, 53, 0.3);
+}

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Scanner & Radar | Trading ToolKit</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Animation Library (AOS - Animate On Scroll) -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components/forms.css">
+    <link rel="stylesheet" href="../css/components/cards.css">
+    <link rel="stylesheet" href="../css/components/scanner.css">
+</head>
+
+<body>
+
+    <!-- TOP HEADER -->
+    <header class="app-header page-header fade-in">
+        <a href="../index.html" class="btn-back">
+            <i data-lucide="arrow-left"></i> Back to Hub
+        </a>
+        <h1 class="logo-title">Market Scanner & Radar Bot</h1>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="page-container">
+
+        <!-- ROW 1: SLIDABLE / CAROUSEL MARKET COLUMNS -->
+        <section class="scanner-row-1" data-aos="fade-up" data-aos-delay="100">
+            <div class="columns-scroll-track">
+
+                <!-- Column 1: Top Volume -->
+                <div class="market-col-card">
+                    <div class="col-header">
+                        <i data-lucide="bar-chart-2" class="text-yellow"></i>
+                        <h3>Top Volume</h3>
+                    </div>
+                    <ul class="coin-mini-list">
+                        <li>
+                            <span class="coin-symbol">BTC/USDT</span>
+                            <span class="coin-price">$64,250.00</span>
+                            <span class="coin-metric">$1.2B Vol</span>
+                        </li>
+                        <li>
+                            <span class="coin-symbol">ETH/USDT</span>
+                            <span class="coin-price">$3,450.50</span>
+                            <span class="coin-metric">$850M Vol</span>
+                        </li>
+                        <li>
+                            <span class="coin-symbol">SOL/USDT</span>
+                            <span class="coin-price">$142.80</span>
+                            <span class="coin-metric">$520M Vol</span>
+                        </li>
+                        <li>
+                            <span class="coin-symbol">BNB/USDT</span>
+                            <span class="coin-price">$575.20</span>
+                            <span class="coin-metric">$310M Vol</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Column 2: Top Gainers -->
+                <div class="market-col-card">
+                    <div class="col-header">
+                        <i data-lucide="trending-up" class="text-green"></i>
+                        <h3>Top Gainers</h3>
+                    </div>
+                    <ul class="coin-mini-list">
+                        <li>
+                            <span class="coin-symbol">PEPE/USDT</span>
+                            <span class="coin-price">$0.0000115</span>
+                            <span class="coin-change text-green">+18.4%</span>
+                        </li>
+                        <li>
+                            <span class="coin-symbol">NEAR/USDT</span>
+                            <span class="coin-price">$5.24</span>
+                            <span class="coin-change text-green">+12.1%</span>
+                        </li>
+                        <li>
+                            <span class="coin-symbol">AVAX/USDT</span>
+                            <span class="coin-price">$28.90</span>
+                            <span class="coin-change text-green">+9.5%</span>
+                        </li>
+                        <li>
+                            <span class="coin-symbol">FET/USDT</span>
+                            <span class="coin-price">$1.45</span>
+                            <span class="coin-change text-green">+8.2%</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Top Losers -->
+                <div class="market-col-card">
+                    <div class="col-header">
+                        <i data-lucide="trending-down" class="text-red"></i>
+                        <h3>Top Losers</h3>
+                    </div>
+                    <ul class="coin-mini-list">
+                        <li>
+                            <span class="coin-symbol">WIF/USDT</span>
+                            <span class="coin-price">$1.82</span>
+                            <span class="coin-change text-red">-11.3%</span>
+                        </li>
+                        <li>
+                            <span class="coin-symbol">ORDI/USDT</span>
+                            <span class="coin-price">$34.10</span>
+                            <span class="coin-change text-red">-7.8%</span>
+                        </li>
+                        <li>
+                            <span class="coin-symbol">DOGE/USDT</span>
+                            <span class="coin-price">$0.122</span>
+                            <span class="coin-change text-red">-5.4%</span>
+                        </li>
+                        <li>
+                            <span class="coin-symbol">SUI/USDT</span>
+                            <span class="coin-price">$0.88</span>
+                            <span class="coin-change text-red">-4.1%</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ROW 2: RADAR & INLINE RESULTS CARD (SPLIT LAYOUT) -->
+        <section class="scanner-row-2" id="radar-row-container" data-aos="fade-up" data-aos-delay="200">
+
+            <!-- Scan Results Panel (Hidden by default, fades in on scan) -->
+            <div class="results-card hidden-card" id="scan-results-card">
+                <div class="results-header">
+                    <h3><i data-lucide="cpu"></i> Bot Scan Results</h3>
+                    <button class="btn-close-results" id="close-results-btn"><i data-lucide="x"></i></button>
+                </div>
+                <div class="scanned-coins-list">
+                    <div class="scanned-item">
+                        <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" class="coin-icon"
+                            alt="BTC">
+                        <div class="item-info">
+                            <strong>BTC/USDT</strong>
+                            <span class="item-loc">Range: 12% (Near Support)</span>
+                        </div>
+                        <span class="item-signal text-green">BUY RECOM.</span>
+                        <button class="btn-add-cal" title="Add to Calendar"><i data-lucide="calendar-plus"></i></button>
+                    </div>
+
+                    <div class="scanned-item">
+                        <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" class="coin-icon"
+                            alt="SOL">
+                        <div class="item-info">
+                            <strong>SOL/USDT</strong>
+                            <span class="item-loc">Range: 88% (Near Resistance)</span>
+                        </div>
+                        <span class="item-signal text-red">SELL RECOM.</span>
+                        <button class="btn-add-cal" title="Add to Calendar"><i data-lucide="calendar-plus"></i></button>
+                    </div>
+
+                    <div class="scanned-item">
+                        <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" class="coin-icon"
+                            alt="ETH">
+                        <div class="item-info">
+                            <strong>ETH/USDT</strong>
+                            <span class="item-loc">Range: 54% (Mid Range)</span>
+                        </div>
+                        <span class="item-signal text-yellow">NEUTRAL</span>
+                        <button class="btn-add-cal" title="Add to Calendar"><i data-lucide="calendar-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Radar Display Card (Spans full width initially) -->
+            <div class="radar-card full-width" id="radar-card">
+                <div class="radar-header">
+                    <h3>3-Week Pattern Radar</h3>
+                    <button class="btn-scan-trigger" id="start-scan-btn">
+                        <i data-lucide="radar"></i> Start Scan
+                    </button>
+                </div>
+
+                <div class="radar-display">
+                    <div class="radar-ring ring-1"></div>
+                    <div class="radar-ring ring-2"></div>
+                    <div class="radar-ring ring-3"></div>
+                    <div class="radar-sweep"></div>
+
+                    <!-- Animated Pop-up Tokens -->
+                    <div class="radar-blip blip-1"><i data-lucide="bitcoin"></i></div>
+                    <div class="radar-blip blip-2"><i data-lucide="coins"></i></div>
+                    <div class="radar-blip blip-3"><i data-lucide="gem"></i></div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ROW 3: TRADING CALENDAR WITH LOGO BADGES -->
+        <section class="calendar-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="calendar-header">
+                <div class="calendar-title">
+                    <i data-lucide="calendar"></i>
+                    <h3>Signal & Target Calendar</h3>
+                </div>
+                <div class="calendar-month-selector">
+                    <button class="btn-cal-nav"><i data-lucide="chevron-left"></i></button>
+                    <span id="calendar-month-label">August 2026</span>
+                    <button class="btn-cal-nav"><i data-lucide="chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="calendar-grid">
+                <!-- Days Header -->
+                <div class="cal-day-label">Sun</div>
+                <div class="cal-day-label">Mon</div>
+                <div class="cal-day-label">Tue</div>
+                <div class="cal-day-label">Wed</div>
+                <div class="cal-day-label">Thu</div>
+                <div class="cal-day-label">Fri</div>
+                <div class="cal-day-label">Sat</div>
+
+                <!-- Calendar Days -->
+                <div class="cal-day empty">26</div>
+                <div class="cal-day empty">27</div>
+                <div class="cal-day empty">28</div>
+                <div class="cal-day empty">29</div>
+                <div class="cal-day empty">30</div>
+                <div class="cal-day empty">31</div>
+                <div class="cal-day">1</div>
+
+                <div class="cal-day">2</div>
+                <div class="cal-day">3</div>
+                <div class="cal-day">4</div>
+                <div class="cal-day has-signal">
+                    <span class="day-num">5</span>
+                    <div class="calendar-logo-badges">
+                        <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
+                            class="cal-coin-icon tag-buy" title="BTC Long Signal">
+                        <img src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png"
+                            class="cal-coin-icon tag-buy" title="BNB Long Signal">
+                    </div>
+                </div>
+                <div class="cal-day">6</div>
+                <div class="cal-day">7</div>
+                <div class="cal-day">8</div>
+
+                <div class="cal-day">9</div>
+                <div class="cal-day">10</div>
+                <div class="cal-day">11</div>
+                <div class="cal-day">12</div>
+                <div class="cal-day has-signal">
+                    <span class="day-num">13</span>
+                    <div class="calendar-logo-badges">
+                        <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png"
+                            class="cal-coin-icon tag-sell" title="SOL Target Hit">
+                    </div>
+                </div>
+                <div class="cal-day">14</div>
+                <div class="cal-day">15</div>
+
+                <div class="cal-day">16</div>
+                <div class="cal-day">17</div>
+                <div class="cal-day">18</div>
+                <div class="cal-day">19</div>
+                <div class="cal-day">20</div>
+                <div class="cal-day">21</div>
+                <div class="cal-day">22</div>
+
+                <div class="cal-day">23</div>
+                <div class="cal-day">24</div>
+                <div class="cal-day">25</div>
+                <div class="cal-day">26</div>
+                <div class="cal-day">27</div>
+                <div class="cal-day">28</div>
+                <div class="cal-day">29</div>
+
+                <div class="cal-day">30</div>
+                <div class="cal-day">31</div>
+                <div class="cal-day empty">1</div>
+                <div class="cal-day empty">2</div>
+                <div class="cal-day empty">3</div>
+                <div class="cal-day empty">4</div>
+                <div class="cal-day empty">5</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="app-footer fade-in">
+        <p>&copy; 2026 Trading ToolKit. Built with <span class="heart">❤️</span> with help of Gemini ✨</p>
+    </footer>
+
+    <!-- Logic Script -->
+    <script type="module" src="../js/module/marketScanner.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        // Initialize Animations & Icons
+        AOS.init({ duration: 800, once: true });
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

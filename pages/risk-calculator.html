@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
+    <!-- Animation Library (AOS - Animate On Scroll) -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -32,7 +35,7 @@
     </header>
 
     <!-- MAIN CONTAINER -->
-    <main class="page-container fade-in">
+    <main class="page-container" data-aos="fade-up" data-aos-delay="100">
 
         <!-- Global Settings Bar -->
         <div class="global-settings-bar">
@@ -153,7 +156,10 @@
 
     <!-- Logic Engine -->
     <script type="module" src="../js/module/riskCalculator.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
+        // Initialize Animations & Icons
+        AOS.init({ duration: 800, once: true });
         lucide.createIcons();
     </script>
 </body>

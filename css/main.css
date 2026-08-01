@@ -72,3 +72,20 @@ body {
 .fade-in {
     animation: fadeInUp 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
+
+/* Standard Smooth Fade-In */
+@keyframes smoothFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: smoothFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
