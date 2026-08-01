@@ -1,0 +1,74 @@
+:root {
+    --bg-color: #0b0e11;
+    --card-bg: #1e2329;
+    --card-border: #2b313a;
+    --card-hover-border: #fcd535;
+    --text-primary: #eaeaea;
+    --text-secondary: #848e9c;
+    --accent-yellow: #fcd535;
+    --accent-glow: rgba(252, 213, 53, 0.15);
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* Header */
+.app-header {
+    padding: 30px 20px 10px;
+    text-align: center;
+}
+
+.logo-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+
+/* Footer */
+.app-footer {
+    padding: 25px 20px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: auto;
+}
+
+.app-footer .heart {
+    color: #f6465d;
+    display: inline-block;
+    margin: 0 2px;
+}
+
+/* Global Animation Rules */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeInUp 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}

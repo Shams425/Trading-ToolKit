@@ -1,0 +1,21 @@
+/* Hub Layout Container */
+.hub-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+    .hub-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+}

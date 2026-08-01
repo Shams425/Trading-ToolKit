@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Calculator & Journal | Trading ToolKit</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components/forms.css">
+    <link rel="stylesheet" href="../css/components/cards.css">
+</head>
+
+<body>
+
+    <!-- TOP HEADER -->
+    <header class="app-header page-header fade-in">
+        <a href="../index.html" class="btn-back">
+            <i data-lucide="arrow-left"></i> Back to Hub
+        </a>
+        <h1 class="logo-title">Risk Calculator & Journal</h1>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="page-container fade-in">
+
+        <!-- Global Settings Bar -->
+        <div class="global-settings-bar">
+            <div class="input-inline">
+                <label for="account-balance">ACCOUNT BALANCE ($)</label>
+                <input type="number" id="account-balance" value="1000">
+            </div>
+            <div class="input-inline">
+                <label for="risk-percent">RISK %</label>
+                <input type="number" id="risk-percent" value="2" step="0.1">
+            </div>
+        </div>
+
+        <!-- Calculator & Results Split View -->
+        <div class="calc-grid">
+
+            <!-- Inputs Panel -->
+            <div class="tool-view-card">
+                <h3 class="panel-title"><i data-lucide="calculator"></i> Trade Parameters</h3>
+
+                <div class="form-group">
+                    <label for="entry-price">Token Entry Price ($)</label>
+                    <input type="number" id="entry-price" value="0.1450" step="any">
+                </div>
+
+                <div class="form-group">
+                    <label for="stop-loss-percent">Stop Loss % Distance</label>
+                    <input type="number" id="stop-loss-percent" value="6.90" step="0.01">
+                    <small class="muted-text">Stop Loss Price auto-calculates from this %.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="stop-loss">Calculated Stop Loss Price ($)</label>
+                    <input type="number" id="stop-loss" value="0.1350" step="any">
+                </div>
+
+                <div class="form-group">
+                    <label for="take-profit">Take Profit Target ($)</label>
+                    <input type="number" id="take-profit" value="0.1650" step="any">
+                </div>
+
+                <div class="button-group">
+                    <button id="calculate-btn" class="btn-primary">Calculate Parameters</button>
+                    <button id="add-trade-btn" class="btn-success">+ Add to Journal</button>
+                </div>
+            </div>
+
+            <!-- Position Details Panel -->
+            <div class="tool-view-card details-card">
+                <h3 class="panel-title"><i data-lucide="pie-chart"></i> Position Details</h3>
+
+                <div class="result-box large">
+                    <span class="result-label">POSITION SIZE</span>
+                    <div class="result-value text-yellow" id="res-position-size">0 units</div>
+                    <span class="result-subtext" id="res-notional">$0.00 required capital</span>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-box">
+                        <span class="result-label">DOLLAR RISK</span>
+                        <div class="result-value text-red" id="res-dollar-risk">$0.00</div>
+                        <span class="result-subtext" id="res-risk-percentage">0.00% of account</span>
+                    </div>
+                    <div class="result-box">
+                        <span class="result-label">TARGET PROFIT</span>
+                        <div class="result-value text-green" id="res-dollar-reward">$0.00</div>
+                        <span class="result-subtext" id="res-rr-ratio">R:R - 1:0.00</span>
+                    </div>
+                </div>
+
+                <div class="summary-footer" id="res-summary-text">
+                    Enter details and click calculate to view trade parameters.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Trade Journal Section -->
+        <div class="tool-view-card journal-card">
+            <div class="journal-header">
+                <h3><i data-lucide="book-open"></i> Trade Journal & History</h3>
+                <div class="journal-stats">
+                    <span>Total Trades: <strong id="total-trades-count">0</strong></span>
+                    <span>P&L: <strong id="total-pnl">$0.00</strong></span>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="trade-table">
+                    <thead>
+                        <tr>
+                            <th>Entry</th>
+                            <th>Stop Loss ($)</th>
+                            <th>Take Profit ($)</th>
+                            <th>Units</th>
+                            <th>Capital ($)</th>
+                            <th>Status</th>
+                            <th>Adjust SL / TP</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trade-log-tbody">
+                        <!-- Dynamic rows rendered here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Toast Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- FOOTER -->
+    <footer class="app-footer fade-in">
+        <p>&copy; 2026 Trading ToolKit. Built with <span class="heart">❤️</span> with help of Gemini ✨</p>
+    </footer>
+
+    <!-- Logic Engine -->
+    <script type="module" src="../js/module/riskCalculator.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

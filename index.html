@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading ToolKit</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Animation Library (AOS - Animate On Scroll) -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="app-header">
+        <h1 class="logo-title">Trading ToolKit</h1>
+    </header>
+
+    <!-- MAIN HUB BODY -->
+    <main class="hub-container">
+
+        <!-- CARD 1: RISK CALCULATOR -->
+        <a href="pages/risk-calculator.html" class="tool-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="icon-wrapper">
+                <i data-lucide="calculator"></i>
+            </div>
+            <div class="card-label">
+                <h3>Risk Calculator</h3>
+                <p>Position Sizing & R:R Ratios</p>
+            </div>
+        </a>
+
+        <!-- CARD 2: SCANNER & SCHEDULER -->
+        <a href="pages/market-scanner.html" class="tool-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="icon-wrapper">
+                <i data-lucide="radar"></i>
+            </div>
+            <div class="card-label">
+                <h3>Market Scanner</h3>
+                <p>Binance Signals & Scheduler</p>
+            </div>
+        </a>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+        <p>&copy; 2026 Trading ToolKit. Built with <span class="heart">❤️ with help of Gemini ✨</span> for disciplined
+            traders.</p>
+    </footer>
+
+    <!-- AOS Animation Library JS -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+    <!-- Main JS Application -->
+    <script type="module" src="js/app.js"></script>
+    <script>
+        // Initialize Animations & Icons
+        AOS.init({ duration: 800, once: true });
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
