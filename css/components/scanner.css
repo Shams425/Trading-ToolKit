@@ -2,11 +2,11 @@
 .page-header {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 20px;
-    max-width: 1000px;
+    width: 100%;
     margin: 0 auto;
-    padding: 20px 20px 10px;
+    padding: 20px 25px;
 }
 
 .btn-back {
@@ -115,90 +115,41 @@
 }
 
 /* ROW 2: RADAR & INLINE RESULTS CARD (GRID SPLIT) */
-.scanner-row-2 {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    transition: all 0.4s ease;
+/* --- ROW 2 CONTAINER LAYOUT --- */
+.radar-row-wrapper {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    align-items: stretch;
 }
 
-.scanner-row-2.split-active {
-    grid-template-columns: 1fr 1fr;
+/* Card Visibility Toggle */
+.hidden-card {
+    display: none !important;
 }
 
-@media (max-width: 800px) {
-    .scanner-row-2.split-active {
-        grid-template-columns: 1fr;
-    }
-}
-
+/* --- BOTH CARDS LOCKED AT 480px HEIGHT --- */
+.results-card,
 .radar-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 16px;
+    flex: 1;
+    height: 480px;
+    min-height: 480px;
+    max-height: 480px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
+    box-sizing: border-box;
     overflow: hidden;
-    min-height: 280px;
 }
 
-/* Fix Radar Header & "Start Scan" Button Size */
-.radar-header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-}
-
-.radar-header h3 {
-    font-size: 14px;
-    font-weight: 600;
-    margin: 0;
-    white-space: nowrap;
-}
-
-/* Constrain button width so it never stretches across full card */
-.btn-scan-trigger {
-    background-color: var(--accent-yellow);
-    color: #000;
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: 700;
-    border-radius: 6px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    cursor: pointer;
-    border: none;
-    width: auto;
-    /* Prevents button from stretching */
-    max-width: 160px;
-    /* Hard limit on width */
-    flex-shrink: 0;
-    /* Keeps button compact */
-    transition: transform 0.15s ease, background-color 0.15s ease;
-}
-
-.btn-scan-trigger:hover {
-    background-color: #e5bd20;
-    transform: translateY(-1px);
-}
-
-/* Fix Bot Scan Results Header & "X" Button Alignment */
+/* --- BOT SCAN RESULTS PANEL --- */
 .results-header {
-    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--card-border);
-    padding-bottom: 10px;
-    margin-bottom: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--card-border, rgba(255, 255, 255, 0.1));
+    margin-bottom: 12px;
 }
 
 .results-header h3 {
@@ -210,7 +161,6 @@
     margin: 0;
 }
 
-/* Clean, crisp alignment for the close button */
 .btn-close-results {
     background: transparent;
     border: none;
@@ -221,24 +171,81 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s ease, background-color 0.2s ease;
-    margin-left: auto;
-    /* Forces X to far right edge */
+    flex: none !important;
+    width: auto;
 }
 
 .btn-close-results:hover {
-    color: var(--text-primary);
-    background-color: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
 }
 
+/* Internal Scrollable Container for Coins */
+.scanned-coins-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.scanned-coins-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.scanned-coins-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+}
+
+.scanned-coins-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+/* --- RADAR CARD & CENTERED DISPLAY --- */
+.radar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.btn-scan-trigger {
+    background-color: var(--accent-yellow, #fcd535);
+    color: #000;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    border: none;
+    flex: none !important;
+    width: auto;
+}
+
+/* Centered Radar Container */
 .radar-display {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(252, 213, 53, 0.05) 0%, rgba(0, 0, 0, 0.4) 100%);
-    border: 1px solid rgba(252, 213, 53, 0.3);
+    flex: 1;
     position: relative;
-    margin: 15px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Central Radar Circle Scope */
+.radar-sweep-container {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    border: 1px solid rgba(252, 213, 53, 0.15);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -250,31 +257,32 @@
     border: 1px dashed rgba(252, 213, 53, 0.2);
 }
 
-.ring-1 {
-    width: 130px;
-    height: 130px;
-}
-
-.ring-2 {
+.radar-ring.inner {
     width: 80px;
     height: 80px;
 }
 
-.ring-3 {
-    width: 30px;
-    height: 30px;
+.radar-ring.middle {
+    width: 160px;
+    height: 160px;
 }
 
+.radar-ring.outer {
+    width: 240px;
+    height: 240px;
+}
+
+/* Rotating Sweep */
 .radar-sweep {
     position: absolute;
-    width: 90px;
-    height: 90px;
+    width: 120px;
+    height: 120px;
     top: 0;
     right: 0;
-    background: linear-gradient(45deg, rgba(252, 213, 53, 0.4), transparent 70%);
-    transform-origin: bottom left;
-    animation: rotateSweep 3s linear infinite;
-    border-radius: 100% 0 0 0;
+    background: conic-gradient(from 0deg at 0% 100%, rgba(252, 213, 53, 0.4) 0deg, transparent 60deg);
+    transform-origin: 0% 100%;
+    animation: rotateSweep 4s linear infinite;
+    border-radius: 0 100% 0 0;
 }
 
 @keyframes rotateSweep {
@@ -287,28 +295,35 @@
     }
 }
 
-.radar-blip {
+/* Floating Icon Placement */
+.radar-icon {
     position: absolute;
-    color: var(--accent-yellow);
-    font-size: 12px;
-    animation: blipPulse 2s infinite ease-in-out;
+    color: rgba(252, 213, 53, 0.6);
+    font-size: 18px;
 }
 
+
 .blip-1 {
+    position: absolute;
     top: 30px;
     left: 40px;
+    animation: blipPulse 2s infinite ease-in-out;
     animation-delay: 0s;
 }
 
 .blip-2 {
+    position: absolute;
     bottom: 40px;
     right: 35px;
+    animation: blipPulse 2s infinite ease-in-out;
     animation-delay: 0.7s;
 }
 
 .blip-3 {
+    position: absolute;
     top: 70px;
     right: 50px;
+    animation: blipPulse 2s infinite ease-in-out;
     animation-delay: 1.3s;
 }
 
@@ -326,90 +341,41 @@
     }
 }
 
-/* RESULTS CARD IN ROW 2 */
-.results-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 16px;
+/* --- SPINNER & TIMEOUT STYLES --- */
+.scan-status-container {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
     gap: 12px;
-    animation: fadeIn 0.4s ease-out forwards;
+    color: var(--text-secondary, #848e9c);
+    font-size: 13px;
 }
 
-.results-card.hidden-card {
-    display: none;
+.spinner-icon {
+    animation: spin 1s linear infinite;
+    color: var(--accent-yellow, #fcd535);
+    width: 32px;
+    height: 32px;
 }
 
-.results-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--card-border);
-    padding-bottom: 8px;
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.results-header h3 {
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin: 0;
-}
 
-.btn-close-results {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-}
 
-.scanned-coins-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.scanned-item {
-    background-color: var(--bg-color);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    gap: 10px;
-}
-
-.coin-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-}
-
-.item-info {
-    display: flex;
-    flex-direction: column;
-    margin-right: auto;
-}
-
-.item-loc {
-    font-size: 10px;
-    color: var(--text-secondary);
-}
-
-.item-signal {
-    font-weight: 700;
-    font-size: 11px;
-}
-
-.btn-add-cal {
-    background: none;
-    border: none;
-    color: var(--accent-yellow);
-    cursor: pointer;
+.error-message {
+    color: #f6465d;
+    font-weight: 600;
 }
 
 /* ROW 3: TRADING CALENDAR WITH LOGOS */
@@ -560,11 +526,92 @@
 }
 
 /* Micro-hover on scanned list items inside the card */
+/* --- SCANNED ITEM FLEX LAYOUT FIX --- */
+
 .scanned-item {
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background-color: var(--card-bg-secondary, rgba(255, 255, 255, 0.03));
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .scanned-item:hover {
-    transform: translateX(4px);
     border-color: rgba(252, 213, 53, 0.3);
+    transform: translateX(2px);
+}
+
+/* Constrain Logo Sizes */
+.scanned-item .coin-icon {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 50%;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+/* Middle info section */
+.scanned-item .item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+    /* Prevents flex overflow */
+}
+
+.scanned-item .item-info strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.scanned-item .item-loc {
+    font-size: 11px;
+    color: var(--text-secondary, #848e9c);
+    white-space: nowrap;
+}
+
+/* Signal Tag */
+.scanned-item .item-signal {
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    padding: 4px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+/* Add to Calendar Button Styling */
+.btn-add-cal {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--accent-yellow, #fcd535);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    flex: none !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-add-cal:hover {
+    background: rgba(252, 213, 53, 0.15);
+    border-color: var(--accent-yellow, #fcd535);
+}
+
+.btn-add-cal svg {
+    width: 16px;
+    height: 16px;
 }

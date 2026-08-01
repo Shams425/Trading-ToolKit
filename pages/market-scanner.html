@@ -136,74 +136,50 @@
         </section>
 
         <!-- ROW 2: RADAR & INLINE RESULTS CARD (SPLIT LAYOUT) -->
-        <section class="scanner-row-2" id="radar-row-container" data-aos="fade-up" data-aos-delay="200">
+        <!-- Row 2: Radar & Split Bot Scan Results -->
+        <div id="radar-row-container" class="radar-row-wrapper">
 
-            <!-- Scan Results Panel (Hidden by default, fades in on scan) -->
-            <div class="results-card hidden-card" id="scan-results-card">
+            <!-- Bot Scan Results Side Panel -->
+            <div id="scan-results-card" class="card results-card hidden-card">
                 <div class="results-header">
                     <h3><i data-lucide="cpu"></i> Bot Scan Results</h3>
-                    <button class="btn-close-results" id="close-results-btn"><i data-lucide="x"></i></button>
+                    <button id="close-results-btn" class="btn-close-results" title="Close Panel">
+                        <i data-lucide="x"></i>
+                    </button>
                 </div>
+
+                <!-- Dynamic Scanned Coins List -->
                 <div class="scanned-coins-list">
-                    <div class="scanned-item">
-                        <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" class="coin-icon"
-                            alt="BTC">
-                        <div class="item-info">
-                            <strong>BTC/USDT</strong>
-                            <span class="item-loc">Range: 12% (Near Support)</span>
-                        </div>
-                        <span class="item-signal text-green">BUY RECOM.</span>
-                        <button class="btn-add-cal" title="Add to Calendar"><i data-lucide="calendar-plus"></i></button>
-                    </div>
-
-                    <div class="scanned-item">
-                        <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" class="coin-icon"
-                            alt="SOL">
-                        <div class="item-info">
-                            <strong>SOL/USDT</strong>
-                            <span class="item-loc">Range: 88% (Near Resistance)</span>
-                        </div>
-                        <span class="item-signal text-red">SELL RECOM.</span>
-                        <button class="btn-add-cal" title="Add to Calendar"><i data-lucide="calendar-plus"></i></button>
-                    </div>
-
-                    <div class="scanned-item">
-                        <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" class="coin-icon"
-                            alt="ETH">
-                        <div class="item-info">
-                            <strong>ETH/USDT</strong>
-                            <span class="item-loc">Range: 54% (Mid Range)</span>
-                        </div>
-                        <span class="item-signal text-yellow">NEUTRAL</span>
-                        <button class="btn-add-cal" title="Add to Calendar"><i data-lucide="calendar-plus"></i></button>
-                    </div>
+                    <!-- Dynamic data / loading states render here -->
                 </div>
             </div>
 
-            <!-- Radar Display Card (Spans full width initially) -->
-            <div class="radar-card full-width" id="radar-card">
+            <!-- 3-Week Pattern Radar Main Card -->
+            <div class="card radar-card">
                 <div class="radar-header">
                     <h3>3-Week Pattern Radar</h3>
-                    <button class="btn-scan-trigger" id="start-scan-btn">
+                    <button id="start-scan-btn" class="btn-scan-trigger">
                         <i data-lucide="radar"></i> Start Scan
                     </button>
                 </div>
 
+                <!-- Centered Radar Display -->
                 <div class="radar-display">
-                    <div class="radar-ring ring-1"></div>
-                    <div class="radar-ring ring-2"></div>
-                    <div class="radar-ring ring-3"></div>
-                    <div class="radar-sweep"></div>
+                    <div class="radar-sweep-container">
+                        <div class="radar-ring inner"></div>
+                        <div class="radar-ring middle"></div>
+                        <div class="radar-ring outer"></div>
+                        <div class="radar-sweep"></div>
+                        <!-- Floating Radar Markers -->
+                        <span class="radar-icon icon-btc blip-1"><i data-lucide="bitcoin"></i></span>
+                        <span class="radar-icon icon-gem blip-2"><i data-lucide="gem"></i></span>
+                        <span class="radar-icon icon-coins blip-3"><i data-lucide="coins"></i></span>
+                    </div>
 
-                    <!-- Animated Pop-up Tokens -->
-                    <div class="radar-blip blip-1"><i data-lucide="bitcoin"></i></div>
-                    <div class="radar-blip blip-2"><i data-lucide="coins"></i></div>
-                    <div class="radar-blip blip-3"><i data-lucide="gem"></i></div>
                 </div>
             </div>
 
-        </section>
-
+        </div>
         <!-- ROW 3: TRADING CALENDAR WITH LOGO BADGES -->
         <section class="calendar-card" data-aos="fade-up" data-aos-delay="300">
             <div class="calendar-header">
