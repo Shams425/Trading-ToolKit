@@ -95,11 +95,12 @@ async function runBotScan() {
 
         if (isTimedOut) return;
 
-        // Render Scanned Results
+        // Render & Save Scanned Results
         if (scanResults.length === 0) {
             renderErrorState("No pattern matches found.");
         } else {
             renderScannedList(scanResults);
+            saveRadarState(scanResults, true); // <--- Make sure this line is called!
         }
 
     } catch (error) {
@@ -163,3 +164,65 @@ if (closeResultsBtn) {
         scanResultsCard.classList.add('hidden-card');
     });
 }
+
+const RADAR_STORAGE_KEY = 'trading_toolkit_radar_state';
+
+/**
+ * Save Radar Scan Results & Panel Visibility
+ */
+function saveRadarState(scanResults, isPanelOpen) {
+    const state = {
+        isPanelOpen: isPanelOpen,
+        timestamp: Date.now(),
+        results: scanResults || []
+    };
+    localStorage.setItem(RADAR_STORAGE_KEY, JSON.stringify(state));
+}
+
+/**
+ * Restore Saved Radar State on Page Load
+ */
+function restoreRadarState() {
+    const saved = localStorage.getItem(RADAR_STORAGE_KEY);
+    if (!saved) return;
+
+    try {
+        const state = JSON.parse(saved);
+
+        // Optional: Expire cached scan after 15 minutes (900,000 ms)
+        const isExpired = Date.now() - state.timestamp > 15 * 60 * 1000;
+        if (isExpired) {
+            localStorage.removeItem(RADAR_STORAGE_KEY);
+            return;
+        }
+
+        // Restore panel open/closed state
+        if (state.isPanelOpen && state.results.length > 0) {
+            scanResultsCard.classList.remove('hidden-card');
+            renderScannedList(state.results);
+        }
+    } catch (e) {
+        console.error('Failed to restore radar state:', e);
+    }
+}
+
+// Modify runBotScan() in js/module/marketScanner.js to save results when complete:
+// Add this right after scanResults are collected and rendered:
+/*
+   renderScannedList(scanResults);
+   saveRadarState(scanResults, true); // <--- Save State Here
+*/
+
+// Update Close Button listener to save closed state:
+if (closeResultsBtn) {
+    closeResultsBtn.addEventListener('click', () => {
+        scanResultsCard.classList.add('hidden-card');
+        saveRadarState([], false); // <--- Clear/Save Closed State
+    });
+}
+
+// Call restore state on initial page load
+document.addEventListener('DOMContentLoaded', () => {
+    // loadMarketOverview();
+    restoreRadarState();
+});

@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/components/forms.css">
     <link rel="stylesheet" href="../css/components/cards.css">
+    <link rel="stylesheet" href="../css/components/calculator.css">
 </head>
 
 <body>
@@ -34,120 +35,161 @@
         <h1 class="logo-title">Risk Calculator & Journal</h1>
     </header>
 
+
+    <!-- Toast Container (Sliding Notification) -->
+
     <!-- MAIN CONTAINER -->
     <main class="page-container" data-aos="fade-up" data-aos-delay="100">
 
-        <!-- Global Settings Bar -->
-        <div class="global-settings-bar">
-            <div class="input-inline">
-                <label for="account-balance">ACCOUNT BALANCE ($)</label>
-                <input type="number" id="account-balance" value="1000">
-            </div>
-            <div class="input-inline">
-                <label for="risk-percent">RISK %</label>
-                <input type="number" id="risk-percent" value="2" step="0.1">
-            </div>
-        </div>
+        <div id="toast-container" class="toast-container"></div>
 
-        <!-- Calculator & Results Split View -->
-        <div class="calc-grid">
-
-            <!-- Inputs Panel -->
-            <div class="tool-view-card">
-                <h3 class="panel-title"><i data-lucide="calculator"></i> Trade Parameters</h3>
-
-                <div class="form-group">
-                    <label for="entry-price">Token Entry Price ($)</label>
-                    <input type="number" id="entry-price" value="0.1450" step="any">
-                </div>
-
-                <div class="form-group">
-                    <label for="stop-loss-percent">Stop Loss % Distance</label>
-                    <input type="number" id="stop-loss-percent" value="6.90" step="0.01">
-                    <small class="muted-text">Stop Loss Price auto-calculates from this %.</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="stop-loss">Calculated Stop Loss Price ($)</label>
-                    <input type="number" id="stop-loss" value="0.1350" step="any">
-                </div>
-
-                <div class="form-group">
-                    <label for="take-profit">Take Profit Target ($)</label>
-                    <input type="number" id="take-profit" value="0.1650" step="any">
-                </div>
-
-                <div class="button-group">
-                    <button id="calculate-btn" class="btn-primary">Calculate Parameters</button>
-                    <button id="add-trade-btn" class="btn-success">+ Add to Journal</button>
-                </div>
-            </div>
-
-            <!-- Position Details Panel -->
-            <div class="tool-view-card details-card">
-                <h3 class="panel-title"><i data-lucide="pie-chart"></i> Position Details</h3>
-
-                <div class="result-box large">
-                    <span class="result-label">POSITION SIZE</span>
-                    <div class="result-value text-yellow" id="res-position-size">0 units</div>
-                    <span class="result-subtext" id="res-notional">$0.00 required capital</span>
-                </div>
-
-                <div class="results-grid">
-                    <div class="result-box">
-                        <span class="result-label">DOLLAR RISK</span>
-                        <div class="result-value text-red" id="res-dollar-risk">$0.00</div>
-                        <span class="result-subtext" id="res-risk-percentage">0.00% of account</span>
+        <div class="calculator-container">
+            <!-- Modal 1: Close / Delete Trade Modal -->
+            <div id="close-trade-modal" class="custom-modal-overlay hidden">
+                <div class="custom-modal-card slide-down">
+                    <div class="modal-header">
+                        <h4><i data-lucide="check-square"></i> Close Trade Setup</h4>
+                        <button id="btn-close-modal-x" class="btn-icon-close"><i data-lucide="x"></i></button>
                     </div>
-                    <div class="result-box">
-                        <span class="result-label">TARGET PROFIT</span>
-                        <div class="result-value text-green" id="res-dollar-reward">$0.00</div>
-                        <span class="result-subtext" id="res-rr-ratio">R:R - 1:0.00</span>
+                    <div class="modal-body">
+                        <p id="modal-trade-info">Closing trade entered at $0.00</p>
+                        <div class="input-group">
+                            <label for="exit-price-input">Actual Exit Price ($)</label>
+                            <input type="number" id="exit-price-input" placeholder="e.g. 0.160" step="any">
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <!-- New: Delete Untriggered Order Button -->
+                        <button id="btn-delete-untriggered" class="btn-danger-modal">
+                            <i data-lucide="trash-2"></i> Order Canceled
+                        </button>
+                        <div class="modal-right-actions">
+                            <button id="btn-cancel-modal" class="btn-secondary-sm">Cancel</button>
+                        </div>
+                        <div class="modal-right-actions">
+                            <button id="btn-confirm-close-trade" class="btn-primary-sm">Confirm PnL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal 2: Custom Clear History Modal -->
+            <div id="clear-history-modal" class="custom-modal-overlay hidden">
+                <div class="custom-modal-card slide-down">
+                    <div class="modal-header">
+                        <h4 class="text-red"><i data-lucide="alert-triangle"></i> Clear All History?</h4>
+                        <button id="btn-clear-modal-x" class="btn-icon-close"><i data-lucide="x"></i></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete all journal entries and reset your Realized PnL back to zero?
+                            This action cannot be undone.</p>
+                    </div>
+                    <div class="modal-actions modal-actions-end">
+                        <button id="btn-cancel-clear" class="btn-secondary-sm">Keep History</button>
+                        <button id="btn-confirm-clear" class="btn-danger-confirm">Yes, Clear All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Updated Risk Calculator Card -->
+            <div class="card calc-card">
+                <div class="calc-header">
+                    <h3><i data-lucide="calculator"></i> Risk & Position Size Calculator</h3>
+                    <div class="pnl-badge-container">
+                        <span class="pnl-label">Net Realized PnL:</span>
+                        <span id="total-pnl-display" class="pnl-value neutral">$0.00</span>
                     </div>
                 </div>
 
-                <div class="summary-footer" id="res-summary-text">
-                    Enter details and click calculate to view trade parameters.
+                <form id="risk-calc-form" onsubmit="return false;">
+                    <!-- 3-Column Grid Wrapper -->
+                    <div class="calc-grid-layout">
+                        <div class="input-group">
+                            <label for="account-size">Account Balance ($)</label>
+                            <input type="number" id="account-size" placeholder="10000" step="any" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="risk-percent">Risk per Trade (%)</label>
+                            <input type="number" id="risk-percent" placeholder="2" step="any" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="entry-price">Entry Price ($)</label>
+                            <input type="number" id="entry-price" placeholder="0.145" step="any" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="stop-loss">Stop Loss ($)</label>
+                            <input type="number" id="stop-loss" placeholder="0.135" step="any" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="take-profit">Take Profit ($)</label>
+                            <input type="number" id="take-profit" placeholder="0.16" step="any">
+                        </div>
+
+                        <div class="input-group pnl-summary-slot">
+                            <label>Realized PnL Status</label>
+                            <input type="text" id="pnl-status-field" value="$0.00 (0 Trades)" disabled readonly
+                                class="readonly-pnl-input">
+                        </div>
+                    </div>
+
+                    <div class="calc-actions">
+                        <button type="button" id="btn-calculate" class="btn-primary">
+                            <i data-lucide="calculator"></i> Calculate Risk
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Calculation Summary Cards -->
+                <div class="calc-results-grid">
+                    <div class="result-box">
+                        <span class="label">Position Size</span>
+                        <strong id="calc-position-size">$0.00</strong>
+                    </div>
+                    <div class="result-box">
+                        <span class="label">Max Risk ($)</span>
+                        <strong id="calc-risk-amount" class="text-red">$0.00</strong>
+                    </div>
+                    <div class="result-box">
+                        <span class="label">Risk / Reward</span>
+                        <strong id="calc-rr-ratio" class="text-green">0.00 : 1</strong>
+                    </div>
                 </div>
             </div>
 
-        </div>
-
-        <!-- Trade Journal Section -->
-        <div class="tool-view-card journal-card">
-            <div class="journal-header">
-                <h3><i data-lucide="book-open"></i> Trade Journal & History</h3>
-                <div class="journal-stats">
-                    <span>Total Trades: <strong id="total-trades-count">0</strong></span>
-                    <span>P&L: <strong id="total-pnl">$0.00</strong></span>
+            <!-- Trade Journal Log -->
+            <div class="card journal-card">
+                <div class="journal-header">
+                    <h3><i data-lucide="book-open"></i> Active & Historical Trades</h3>
+                    <button id="btn-clear-journal" class="btn-danger-sm">Clear History</button>
                 </div>
-            </div>
 
-            <div class="table-responsive">
-                <table class="trade-table">
-                    <thead>
-                        <tr>
-                            <th>Entry</th>
-                            <th>Stop Loss ($)</th>
-                            <th>Take Profit ($)</th>
-                            <th>Units</th>
-                            <th>Capital ($)</th>
-                            <th>Status</th>
-                            <th>Adjust SL / TP</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="trade-log-tbody">
-                        <!-- Dynamic rows rendered here -->
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="journal-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Entry ($)</th>
+                                <th>Stop ($)</th>
+                                <th>Target ($)</th>
+                                <th>Risk ($)</th>
+                                <th>Status</th>
+                                <th>PnL ($)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="journal-table-body">
+                            <!-- Dynamic Rows Rendered Here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
     </main>
-
-    <!-- Toast Container -->
-    <div id="notification-container" class="notification-container"></div>
 
     <!-- FOOTER -->
     <footer class="app-footer fade-in">

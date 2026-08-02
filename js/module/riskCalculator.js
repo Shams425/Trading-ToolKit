@@ -1,213 +1,435 @@
 /**
- * Risk Calculator & Journal Module
+ * Dynamic Risk Calculator & Trade Journal Module with Slide Toast & PnL Tracking
  */
 
-// Selectors
-const accountInput = document.getElementById('account-balance');
-const riskInput = document.getElementById('risk-percent');
-const entryInput = document.getElementById('entry-price');
-const stopPercentInput = document.getElementById('stop-loss-percent');
-const stopPriceInput = document.getElementById('stop-loss');
+const CALCULATOR_KEY = 'trading_toolkit_calc_inputs';
+const JOURNAL_KEY = 'trading_toolkit_journal_logs';
+
+let journalLogs = [];
+let currentCalculation = null;
+let toastTimeoutId = null;
+
+// DOM References
+const accountSizeInput = document.getElementById('account-size');
+const riskPercentInput = document.getElementById('risk-percent');
+const entryPriceInput = document.getElementById('entry-price');
+const stopLossInput = document.getElementById('stop-loss');
 const takeProfitInput = document.getElementById('take-profit');
-const calculateBtn = document.getElementById('calculate-btn');
-const addTradeBtn = document.getElementById('add-trade-btn');
-const tradeLogTbody = document.getElementById('trade-log-tbody');
 
-let tradeLog = [];
+const positionSizeEl = document.getElementById('calc-position-size');
+const riskAmountEl = document.getElementById('calc-risk-amount');
+const rrRatioEl = document.getElementById('calc-rr-ratio');
+const totalPnlDisplay = document.getElementById('total-pnl-display');
+const pnlStatusField = document.getElementById('pnl-status-field');
 
-// Custom Notification Alert
-function showCustomAlert(message) {
-    const container = document.getElementById('notification-container');
-    if (!container) return;
+const btnCalculate = document.getElementById('btn-calculate');
+const btnClearJournal = document.getElementById('btn-clear-journal');
+const journalBody = document.getElementById('journal-table-body');
+const toastContainer = document.getElementById('toast-container');
 
-    const toast = document.createElement('div');
-    toast.className = 'toast-notification';
-    toast.innerHTML = `
-        <span class="toast-close">&times;</span>
-        <strong>System Note:</strong><br>${message}
-    `;
+/**
+ * 1. Perform Risk Calculation (Triggered ON BUTTON CLICK only)
+ */
+function handleCalculateClick() {
+    const accountSize = parseFloat(accountSizeInput?.value) || 0;
+    const riskPercent = parseFloat(riskPercentInput?.value) || 0;
+    const entryPrice = parseFloat(entryPriceInput?.value) || 0;
+    const stopLoss = parseFloat(stopLossInput?.value) || 0;
+    const takeProfit = parseFloat(takeProfitInput?.value) || 0;
 
-    toast.querySelector('.toast-close').addEventListener('click', () => toast.remove());
-    container.appendChild(toast);
-
-    setTimeout(() => { if (toast) toast.remove(); }, 6000);
-}
-
-// Auto-calculate Stop Loss Price based on %
-function updateCalculatedStopLoss() {
-    const entryPrice = parseFloat(entryInput.value);
-    const stopPercent = parseFloat(stopPercentInput.value);
-
-    if (!isNaN(entryPrice) && !isNaN(stopPercent)) {
-        const calculatedStopPrice = entryPrice * (1 - (stopPercent / 100));
-        stopPriceInput.value = calculatedStopPrice.toFixed(4);
-    }
-}
-
-// Auto-update % when Stop Loss Price changes
-function updateStopLossPercent() {
-    const entryPrice = parseFloat(entryInput.value);
-    const stopPrice = parseFloat(stopPriceInput.value);
-
-    if (!isNaN(entryPrice) && !isNaN(stopPrice) && entryPrice > stopPrice) {
-        const percent = ((entryPrice - stopPrice) / entryPrice) * 100;
-        stopPercentInput.value = percent.toFixed(2);
-    }
-}
-
-// Main Calculator Engine
-export function calculateRisk() {
-    const accountBalance = parseFloat(accountInput.value);
-    const riskPercent = parseFloat(riskInput.value);
-    const entryPrice = parseFloat(entryInput.value);
-    const stopLoss = parseFloat(stopPriceInput.value);
-    const takeProfit = parseFloat(takeProfitInput.value);
-
-    if (isNaN(accountBalance) || isNaN(riskPercent) || isNaN(entryPrice) || isNaN(stopLoss) || isNaN(takeProfit)) {
-        return null;
-    }
-
-    if (stopLoss >= entryPrice) {
-        showCustomAlert("Stop loss must sit strictly below the Token Entry Price.");
-        return null;
-    }
-
-    if (takeProfit <= entryPrice) {
-        showCustomAlert("Take profit target must sit strictly above the Token Entry Price.");
-        return null;
-    }
-
-    const dollarRisk = accountBalance * (riskPercent / 100);
-    const priceRiskPerUnit = entryPrice - stopLoss;
-    const positionUnits = dollarRisk / priceRiskPerUnit;
-    const requiredCapital = positionUnits * entryPrice;
-
-    const priceRewardPerUnit = takeProfit - entryPrice;
-    const dollarReward = positionUnits * priceRewardPerUnit;
-    const rrRatio = dollarReward / dollarRisk;
-
-    // Update UI Output
-    document.getElementById('res-position-size').innerText = `${positionUnits.toFixed(2)} units`;
-    document.getElementById('res-notional').innerText = `$${requiredCapital.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} required capital`;
-
-    document.getElementById('res-dollar-risk').innerText = `$${dollarRisk.toFixed(2)}`;
-    document.getElementById('res-risk-percentage').innerText = `${riskPercent.toFixed(2)}% of account`;
-
-    document.getElementById('res-dollar-reward').innerText = `+$${dollarReward.toFixed(2)}`;
-    document.getElementById('res-rr-ratio').innerText = `R:R Ratio - 1 : ${rrRatio.toFixed(2)}`;
-
-    document.getElementById('res-summary-text').innerText =
-        `With a $${accountBalance.toLocaleString()} account risking ${riskPercent}%, your max loss is limited to $${dollarRisk.toFixed(2)}. ` +
-        `Buying ${positionUnits.toFixed(2)} units at $${entryPrice} costs $${requiredCapital.toFixed(2)} capital. Your profit target pays $${dollarReward.toFixed(2)}.`;
-
-    return { entryPrice, stopLoss, takeProfit, positionUnits, requiredCapital, dollarRisk, dollarReward, rrRatio };
-}
-
-// Add to Journal
-function addTradeToJournal() {
-    const tradeData = calculateRisk();
-    if (!tradeData) {
-        showCustomAlert("Cannot log invalid trade setup. Check entry, stop loss, and take profit numbers.");
+    if (accountSize <= 0 || riskPercent <= 0 || entryPrice <= 0 || stopLoss <= 0) {
+        alert('Please fill out Account Balance, Risk %, Entry Price, and Stop Loss with valid positive numbers.');
         return;
     }
 
-    const trade = {
-        id: Date.now(),
-        entry: tradeData.entryPrice,
-        stopLoss: tradeData.stopLoss,
-        takeProfit: tradeData.takeProfit,
-        units: tradeData.positionUnits,
-        capital: tradeData.requiredCapital,
-        dollarRisk: tradeData.dollarRisk,
-        dollarReward: tradeData.dollarReward,
-        status: 'pending',
-        actualPnl: 0
+    // Save current inputs to LocalStorage
+    saveInputsToStorage();
+
+    // Risk Calculation Math
+    const maxRiskAmount = accountSize * (riskPercent / 100);
+    const riskPerUnit = Math.abs(entryPrice - stopLoss);
+
+    if (riskPerUnit === 0) {
+        alert('Entry price and Stop Loss cannot be identical.');
+        return;
+    }
+
+    const positionUnits = maxRiskAmount / riskPerUnit;
+    const totalPositionSize = positionUnits * entryPrice;
+
+    let rrRatio = '0.00 : 1';
+    let rewardPerUnit = 0;
+    if (takeProfit > 0) {
+        rewardPerUnit = Math.abs(takeProfit - entryPrice);
+        rrRatio = `${(rewardPerUnit / riskPerUnit).toFixed(2)} : 1`;
+    }
+
+    // Cache calculation result
+    currentCalculation = {
+        entryPrice,
+        stopLoss,
+        takeProfit,
+        maxRiskAmount,
+        positionUnits,
+        totalPositionSize,
+        rrRatio
     };
 
-    tradeLog.push(trade);
+    // Update Output Displays
+    if (positionSizeEl) positionSizeEl.innerText = `$${totalPositionSize.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (riskAmountEl) riskAmountEl.innerText = `$${maxRiskAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (rrRatioEl) rrRatioEl.innerText = rrRatio;
+
+    // Trigger Slide-in Toast Alert
+    showLogToJournalToast();
+}
+
+/**
+ * 2. Sliding Toast Notification with 1-Minute Timeout
+ */
+function showLogToJournalToast() {
+    if (!toastContainer) return;
+
+    // Clear existing toast if present
+    toastContainer.innerHTML = '';
+    if (toastTimeoutId) clearTimeout(toastTimeoutId);
+
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification slide-in';
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i data-lucide="check-circle" class="toast-icon"></i>
+            <div class="toast-text">
+                <strong>Calculation Ready!</strong>
+                <span>Would you like to log this trade setup to your journal?</span>
+            </div>
+        </div>
+        <div class="toast-actions">
+            <button id="toast-btn-yes" class="btn-toast-confirm">Log Trade</button>
+            <button id="toast-btn-dismiss" class="btn-toast-cancel"><i data-lucide="x"></i></button>
+        </div>
+        <div class="toast-progress-bar"></div>
+    `;
+
+    toastContainer.appendChild(toast);
+    if (window.lucide) window.lucide.createIcons();
+
+    // Confirm button event
+    document.getElementById('toast-btn-yes')?.addEventListener('click', () => {
+        addCurrentTradeToJournal();
+        dismissToast(toast);
+    });
+
+    // Dismiss button event
+    document.getElementById('toast-btn-dismiss')?.addEventListener('click', () => {
+        dismissToast(toast);
+    });
+
+    // 1-Minute Auto Dismiss (60,000 ms)
+    toastTimeoutId = setTimeout(() => {
+        dismissToast(toast);
+    }, 60000);
+}
+
+function dismissToast(toastEl) {
+    if (!toastEl) return;
+    toastEl.classList.remove('slide-in');
+    toastEl.classList.add('slide-out');
+    setTimeout(() => {
+        toastEl.remove();
+    }, 400);
+}
+
+/**
+ * 3. Log Trade & Manage Trade Lifecycles (Active -> Closed)
+ */
+function addCurrentTradeToJournal() {
+    if (!currentCalculation) return;
+
+    const newTrade = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        entry: currentCalculation.entryPrice,
+        stop: currentCalculation.stopLoss,
+        target: currentCalculation.takeProfit || 0,
+        risk: currentCalculation.maxRiskAmount,
+        units: currentCalculation.positionUnits,
+        status: 'OPEN', // 'OPEN', 'WIN', 'LOSS'
+        pnl: 0
+    };
+
+    journalLogs.unshift(newTrade);
+    saveJournalToStorage();
     renderJournalTable();
-    showCustomAlert(`Logged trade: ${trade.units.toFixed(2)} units at $${trade.entry}`);
+    updateTotalPnL();
 }
 
-// Render Journal Table
+let pendingCloseTradeId = null;
+
+// Modal Elements
+const closeTradeModal = document.getElementById('close-trade-modal');
+const modalTradeInfo = document.getElementById('modal-trade-info');
+const exitPriceInput = document.getElementById('exit-price-input');
+const btnConfirmClose = document.getElementById('btn-confirm-close-trade');
+const btnCancelModal = document.getElementById('btn-cancel-modal');
+const btnCloseModalX = document.getElementById('btn-close-modal-x');
+
+/**
+ * Open Custom Modal to Close Trade
+ */
+window.openCloseTradeModal = function (id) {
+    const trade = journalLogs.find(t => t.id === id);
+    if (!trade || !closeTradeModal) return;
+
+    pendingCloseTradeId = id;
+
+    if (modalTradeInfo) {
+        modalTradeInfo.innerHTML = `Closing trade entry at <strong style="color: #fff;">$${trade.entry.toLocaleString()}</strong>`;
+    }
+
+    if (exitPriceInput) {
+        exitPriceInput.value = trade.target || trade.entry;
+    }
+
+    closeTradeModal.classList.remove('hidden');
+};
+
+/**
+ * Close Modal Function
+ */
+function hideCloseModal() {
+    if (closeTradeModal) closeTradeModal.classList.add('hidden');
+    pendingCloseTradeId = null;
+}
+
+/**
+ * Process Trade Execution on Modal Confirm
+ */
+function confirmCloseTradeExecution() {
+    if (!pendingCloseTradeId) return;
+
+    const trade = journalLogs.find(t => t.id === pendingCloseTradeId);
+    if (!trade) return;
+
+    const exitPrice = parseFloat(exitPriceInput?.value);
+    if (isNaN(exitPrice) || exitPrice <= 0) {
+        alert('Please enter a valid exit price.');
+        return;
+    }
+
+    const isLong = trade.entry > trade.stop;
+    let realizedPnl = 0;
+
+    if (isLong) {
+        realizedPnl = (exitPrice - trade.entry) * trade.units;
+    } else {
+        realizedPnl = (trade.entry - exitPrice) * trade.units;
+    }
+
+    trade.status = realizedPnl >= 0 ? 'WIN' : 'LOSS';
+    trade.pnl = realizedPnl;
+
+    saveJournalToStorage();
+    renderJournalTable();
+    updateTotalPnL();
+    hideCloseModal();
+}
+
+// Bind Modal Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    btnConfirmClose?.addEventListener('click', confirmCloseTradeExecution);
+    btnCancelModal?.addEventListener('click', hideCloseModal);
+    btnCloseModalX?.addEventListener('click', hideCloseModal);
+});
+
+
+/**
+ * 4. PnL Aggregation Engine
+ */
+function updateTotalPnL() {
+    const closedTrades = journalLogs.filter(t => t.status !== 'OPEN');
+    const netPnL = closedTrades.reduce((acc, trade) => acc + trade.pnl, 0);
+
+    if (totalPnlDisplay) {
+        totalPnlDisplay.innerText = `${netPnL >= 0 ? '+' : ''}$${netPnL.toFixed(2)}`;
+        totalPnlDisplay.className = `pnl-value ${netPnL > 0 ? 'positive' : netPnL < 0 ? 'negative' : 'neutral'}`;
+    }
+
+    if (pnlStatusField) {
+        pnlStatusField.value = `${netPnL >= 0 ? '+' : ''}$${netPnL.toFixed(2)} (${closedTrades.length} Closed Trades)`;
+        pnlStatusField.className = `readonly-pnl-input ${netPnL > 0 ? 'text-green' : netPnL < 0 ? 'text-red' : ''}`;
+    }
+}
+
+/**
+ * 5. LocalStorage State Engine
+ */
+function saveInputsToStorage() {
+    const inputs = {
+        accountSize: accountSizeInput?.value || '',
+        riskPercent: riskPercentInput?.value || '',
+        entryPrice: entryPriceInput?.value || '',
+        stopLoss: stopLossInput?.value || '',
+        takeProfit: takeProfitInput?.value || ''
+    };
+    localStorage.setItem(CALCULATOR_KEY, JSON.stringify(inputs));
+}
+
+function restoreInputsFromStorage() {
+    const saved = localStorage.getItem(CALCULATOR_KEY);
+    if (!saved) return;
+
+    try {
+        const inputs = JSON.parse(saved);
+        if (accountSizeInput && inputs.accountSize !== undefined) accountSizeInput.value = inputs.accountSize;
+        if (riskPercentInput && inputs.riskPercent !== undefined) riskPercentInput.value = inputs.riskPercent;
+        if (entryPriceInput && inputs.entryPrice !== undefined) entryPriceInput.value = inputs.entryPrice;
+        if (stopLossInput && inputs.stopLoss !== undefined) stopLossInput.value = inputs.stopLoss;
+        if (takeProfitInput && inputs.takeProfit !== undefined) takeProfitInput.value = inputs.takeProfit;
+    } catch (e) {
+        console.error('Failed restoring calculator inputs:', e);
+    }
+}
+
+function saveJournalToStorage() {
+    localStorage.setItem(JOURNAL_KEY, JSON.stringify(journalLogs));
+}
+
+function restoreJournalFromStorage() {
+    const saved = localStorage.getItem(JOURNAL_KEY);
+    if (!saved) return;
+
+    try {
+        journalLogs = JSON.parse(saved);
+        renderJournalTable();
+        updateTotalPnL();
+    } catch (e) {
+        console.error('Failed restoring journal logs:', e);
+    }
+}
+
 function renderJournalTable() {
-    tradeLogTbody.innerHTML = '';
-    let totalPnl = 0;
+    if (!journalBody) return;
 
-    tradeLog.forEach((trade) => {
-        const tr = document.createElement('tr');
-
-        if (trade.status === 'win') trade.actualPnl = trade.dollarReward;
-        else if (trade.status === 'loss') trade.actualPnl = -trade.dollarRisk;
-        else trade.actualPnl = 0;
-
-        totalPnl += trade.actualPnl;
-
-        tr.innerHTML = `
-            <td>$${trade.entry.toFixed(4)}</td>
-            <td>$${trade.stopLoss.toFixed(4)}</td>
-            <td>$${trade.takeProfit.toFixed(4)}</td>
-            <td>${trade.units.toFixed(1)}</td>
-            <td>$${trade.capital.toFixed(2)}</td>
-            <td>
-                <select class="status-select status-${trade.status}" data-id="${trade.id}">
-                    <option value="pending" ${trade.status === 'pending' ? 'selected' : ''}>Pending</option>
-                    <option value="win" ${trade.status === 'win' ? 'selected' : ''}>WIN (+ $${trade.dollarReward.toFixed(2)})</option>
-                    <option value="loss" ${trade.status === 'loss' ? 'selected' : ''}>LOSS (- $${trade.dollarRisk.toFixed(2)})</option>
-                </select>
-            </td>
-            <td>
-                SL: <input type="number" class="adj-input adj-sl" data-id="${trade.id}" value="${trade.stopLoss}" step="0.001">
-                TP: <input type="number" class="adj-input adj-tp" data-id="${trade.id}" value="${trade.takeProfit}" step="0.001">
-            </td>
-            <td>
-                <button class="btn-danger btn-delete" data-id="${trade.id}">Delete</button>
-            </td>
+    if (journalLogs.length === 0) {
+        journalBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="empty-journal">No logged trades. Fill out inputs above and click "Calculate Risk".</td>
+            </tr>
         `;
+        return;
+    }
 
-        tradeLogTbody.appendChild(tr);
-    });
+    journalBody.innerHTML = journalLogs.map(trade => {
+        let statusBadge = '<span class="status-tag open">OPEN</span>';
+        if (trade.status === 'WIN') statusBadge = '<span class="status-tag win">WIN</span>';
+        if (trade.status === 'LOSS') statusBadge = '<span class="status-tag loss">LOSS</span>';
 
-    document.getElementById('total-trades-count').innerText = tradeLog.length;
-    const pnlEl = document.getElementById('total-pnl');
-    pnlEl.innerText = `$${totalPnl.toFixed(2)}`;
-    pnlEl.style.color = totalPnl >= 0 ? '#0ecb81' : '#f6465d';
+        let pnlDisplay = trade.status === 'OPEN' ? '--' : `${trade.pnl >= 0 ? '+' : ''}$${trade.pnl.toFixed(2)}`;
+        let pnlClass = trade.pnl > 0 ? 'text-green' : trade.pnl < 0 ? 'text-red' : '';
 
-    attachTableEvents();
-}
-
-function attachTableEvents() {
-    document.querySelectorAll('.status-select').forEach(select => {
-        select.addEventListener('change', (e) => {
-            const id = Number(e.target.dataset.id);
-            const trade = tradeLog.find(t => t.id === id);
-            if (trade) {
-                trade.status = e.target.value;
-                renderJournalTable();
+        return `
+            <tr>
+                <td>${trade.date}</td>
+                <td>$${trade.entry.toLocaleString()}</td>
+                <td>$${trade.stop.toLocaleString()}</td>
+                <td>${trade.target ? '$' + trade.target.toLocaleString() : 'N/A'}</td>
+                <td class="text-red">$${trade.risk.toFixed(2)}</td>
+                <td>${statusBadge}</td>
+                <td class="${pnlClass}">${pnlDisplay}</td>
+                <td class="action-cell">
+                    ${trade.status === 'OPEN'
+                ? `<button class="btn-close-trade" onclick="window.openCloseTradeModal(${trade.id})">Close Trade</button>`
+                : `<button class="btn-delete-log" onclick="window.deleteTradeLog(${trade.id})"><i data-lucide="trash-2"></i></button>`
             }
-        });
-    });
+                </td>
+            </tr>
+        `;
+    }).join('');
 
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const id = Number(e.target.dataset.id);
-            tradeLog = tradeLog.filter(t => t.id !== id);
-            renderJournalTable();
-        });
-    });
+    if (window.lucide) window.lucide.createIcons();
 }
 
-// Event Listeners
-entryInput.addEventListener('input', () => { updateCalculatedStopLoss(); calculateRisk(); });
-stopPercentInput.addEventListener('input', () => { updateCalculatedStopLoss(); calculateRisk(); });
-stopPriceInput.addEventListener('input', () => { updateStopLossPercent(); calculateRisk(); });
-takeProfitInput.addEventListener('input', calculateRisk);
-accountInput.addEventListener('input', calculateRisk);
-riskInput.addEventListener('input', calculateRisk);
+window.deleteTradeLog = function (id) {
+    journalLogs = journalLogs.filter(trade => trade.id !== id);
+    saveJournalToStorage();
+    renderJournalTable();
+    updateTotalPnL();
+};
 
-calculateBtn.addEventListener('click', calculateRisk);
-addTradeBtn.addEventListener('click', addTradeToJournal);
+/**
+ * 6. Attach Event Listeners
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    restoreInputsFromStorage();
+    restoreJournalFromStorage();
 
-// Initial Execution
-updateCalculatedStopLoss();
-calculateRisk();
+    // Inputs now ONLY save to state when changed (No live calculations)
+    [accountSizeInput, riskPercentInput, entryPriceInput, stopLossInput, takeProfitInput].forEach(input => {
+        input?.addEventListener('input', saveInputsToStorage);
+    });
+
+    if (btnCalculate) btnCalculate.addEventListener('click', handleCalculateClick);
+
+    if (btnClearJournal) {
+        // Unbind any inline handlers and trigger our custom modal directly
+        btnClearJournal.addEventListener('click', (e) => {
+            e.preventDefault();
+            openClearHistoryModal();
+        });
+    }
+});
+
+// Add DOM references for new buttons & clear history modal
+const btnDeleteUntriggered = document.getElementById('btn-delete-untriggered');
+
+const clearHistoryModal = document.getElementById('clear-history-modal');
+const btnCancelClear = document.getElementById('btn-cancel-clear');
+const btnConfirmClear = document.getElementById('btn-confirm-clear');
+const btnClearModalX = document.getElementById('btn-clear-modal-x');
+
+/**
+ * Delete Untriggered Trade Action from Modal
+ */
+function deleteUntriggeredTrade() {
+    if (!pendingCloseTradeId) return;
+
+    journalLogs = journalLogs.filter(t => t.id !== pendingCloseTradeId);
+    saveJournalToStorage();
+    renderJournalTable();
+    updateTotalPnL();
+    hideCloseModal();
+}
+
+/**
+ * Clear History Custom Modal Handlers
+ */
+function openClearHistoryModal() {
+    if (clearHistoryModal) clearHistoryModal.classList.remove('hidden');
+}
+
+function hideClearHistoryModal() {
+    if (clearHistoryModal) clearHistoryModal.classList.add('hidden');
+}
+
+function executeClearHistory() {
+    journalLogs = [];
+    saveJournalToStorage();
+    renderJournalTable();
+    updateTotalPnL();
+    hideClearHistoryModal();
+}
+
+// Bind Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Delete untriggered order listener
+    btnDeleteUntriggered?.addEventListener('click', deleteUntriggeredTrade);
+
+    // Clear History Modal Listeners
+    if (btnClearJournal) {
+        btnClearJournal.addEventListener('click', openClearHistoryModal);
+    }
+    btnCancelClear?.addEventListener('click', hideClearHistoryModal);
+    btnClearModalX?.addEventListener('click', hideClearHistoryModal);
+    btnConfirmClear?.addEventListener('click', executeClearHistory);
+});
