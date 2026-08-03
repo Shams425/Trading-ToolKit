@@ -1,0 +1,222 @@
+/* Container Layout */
+.rules-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
+.page-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.btn-back-hub {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary, #848e9c);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.btn-back-hub:hover {
+    color: var(--accent-yellow, #fcd535);
+}
+
+.page-top-bar h2 {
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Sidebar & Viewer Main Grid */
+.rules-main-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+}
+
+/* Left Sidebar */
+.rules-sidebar {
+    background: #1e2329;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 20px;
+    height: fit-content;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.sidebar-header h4 {
+    color: #fff;
+    font-size: 15px;
+}
+
+.rule-count-badge {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary, #848e9c);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+.rule-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rule-nav-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.rule-nav-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.rule-nav-item.active {
+    background: rgba(252, 213, 53, 0.1);
+    border-color: var(--accent-yellow, #fcd535);
+}
+
+.nav-rule-title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nav-rule-cat {
+    color: var(--text-secondary, #848e9c);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Right Content Viewer */
+.rule-content-viewer {
+    background: #1e2329;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 28px;
+}
+
+.rule-category-badge {
+    background: rgba(59, 130, 246, 0.12);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.rule-visual-banner {
+    width: 100%;
+    margin: 16px 0 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #14181d;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rule-svg-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.rule-content-viewer h1 {
+    color: #fff;
+    font-size: 22px;
+    margin-bottom: 6px;
+}
+
+.rule-tagline {
+    color: var(--accent-yellow, #fcd535);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.rules-divider {
+    border: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 20px 0;
+}
+
+.rule-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.info-block h4 {
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.info-block p {
+    color: var(--text-secondary, #848e9c);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.execution-checklist {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.execution-checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #d1d4dc;
+    font-size: 13px;
+}
+
+.execution-checklist li i {
+    color: #0ecb81;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 850px) {
+    .rules-main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .rule-info-grid {
+        grid-template-columns: 1fr;
+    }
+}

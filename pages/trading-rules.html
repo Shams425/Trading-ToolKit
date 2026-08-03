@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Animation Library (AOS - Animate On Scroll) -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <title>Trading Rules & Playbook | Trading Toolkit</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components/trading-rules.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-dark">
+
+    <div class="rules-page-container">
+        <!-- Navigation Header -->
+        <header class="page-top-bar">
+            <a href="../index.html" class="btn-back-hub">
+                <i data-lucide="arrow-left"></i> Back to Hub
+            </a>
+            <h2><i data-lucide="scroll-text" class="text-blue"></i> Trading Rules & Playbook</h2>
+        </header>
+
+        <!-- Main Content Layout (Sidebar + Main Rule Viewer) -->
+        <main class="rules-main-layout">
+
+            <!-- Left Sidebar: Rule Selector List -->
+            <aside class="rules-sidebar card" data-aos="fade-up" data-aos-delay="100">
+                <div class="sidebar-header">
+                    <h4>Rules Library</h4>
+                    <span class="rule-count-badge" id="rule-count">3 Rules</span>
+                </div>
+                <div class="rule-nav-list" id="rule-nav-list">
+                    <!-- Dynamic Nav Items Rendered via JS -->
+                </div>
+            </aside>
+
+            <!-- Right Area: Detailed Rule Display -->
+            <section class="rule-content-viewer card" data-aos="fade-up" data-aos-delay="200">
+                <div class="viewer-header">
+                    <span class="rule-category-badge" id="rule-category">RISK MANAGEMENT</span>
+                </div>
+
+                <div class="viewer-body">
+                    <!-- Vector Visual Container -->
+                    <div id="rule-visual-container" class="rule-visual-banner">
+                        <!-- SVG Rendered Dynamically -->
+                    </div>
+
+                    <h1 id="rule-title">Never Risk More Than 2% Per Trade</h1>
+                    <p id="rule-tagline" class="rule-tagline">Capital preservation is rule #1 in surviving volatile
+                        markets.</p>
+
+                    <hr class="rules-divider">
+
+                    <div class="rule-info-grid">
+                        <div class="info-block">
+                            <h4><i data-lucide="shield-check" class="text-green"></i> Core Concept</h4>
+                            <p id="rule-concept">Loading concept...</p>
+                        </div>
+
+                        <div class="info-block">
+                            <h4><i data-lucide="alert-triangle" class="text-red"></i> Why Traders Fail This Rule</h4>
+                            <p id="rule-failure">Loading failure reason...</p>
+                        </div>
+                    </div>
+
+                    <div class="info-block full-width">
+                        <h4><i data-lucide="check-circle-2" class="text-yellow"></i> Execution Checklist</h4>
+                        <ul id="rule-execution-list" class="execution-checklist">
+                            <!-- Bullet points rendered via JS -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="../js/module/trading-rules.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+    <script>
+        // Initialize Animations & Icons
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+
+</html>

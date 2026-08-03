@@ -1,0 +1,226 @@
+/* Layout & Container */
+.indicators-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
+.page-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.indicators-main-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+}
+
+/* Sidebar */
+.indicators-sidebar {
+    background: #1e2329;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 20px;
+    height: fit-content;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.sidebar-header h4 {
+    color: #fff;
+    font-size: 15px;
+}
+
+.indicator-count-badge {
+    background: rgba(255, 255, 255, 0.06);
+    color: #848e9c;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+.indicator-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.indicator-nav-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.indicator-nav-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.indicator-nav-item.active {
+    background: rgba(168, 85, 247, 0.12);
+    border-color: #a855f7;
+}
+
+.nav-ind-title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nav-ind-tag {
+    color: #848e9c;
+    font-size: 11px;
+}
+
+/* TradingView Style Mock Container */
+.tv-mock-stage {
+    background: #131722;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.tv-top-bar {
+    background: #1e222d;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tv-symbol-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tv-symbol {
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.tv-timeframe {
+    background: rgba(255, 255, 255, 0.08);
+    color: #2962ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.tv-indicator-tag {
+    color: #a855f7;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.tv-chart-viewport {
+    width: 100%;
+    height: 180px;
+}
+
+.tv-svg-chart {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Info Body Styling */
+.indicator-content-viewer {
+    background: #1e2329;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 28px;
+}
+
+.indicator-content-viewer h1 {
+    color: #fff;
+    font-size: 22px;
+    margin-bottom: 6px;
+}
+
+.indicator-tagline {
+    color: #a855f7;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.indicators-divider {
+    border: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 20px 0;
+}
+
+.indicator-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.info-block h4 {
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.info-block p {
+    color: #848e9c;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.traps-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.traps-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #d1d4dc;
+    font-size: 13px;
+}
+
+.traps-list li i {
+    color: #f6465d;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 850px) {
+    .indicators-main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .indicator-info-grid {
+        grid-template-columns: 1fr;
+    }
+}

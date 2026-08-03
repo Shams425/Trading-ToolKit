@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candlestick Patterns Engine | Trading Toolkit</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Animation Library (AOS - Animate On Scroll) -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components/candlestick-patterns.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-dark">
+
+    <div class="patterns-page-container">
+        <!-- Navigation Header -->
+        <header class="page-top-bar">
+            <a href="../index.html" class="btn-back-hub">
+                <i data-lucide="arrow-left"></i> Back to Hub
+            </a>
+            <h2><i data-lucide="candlestick-chart" class="text-green"></i> Candlestick Patterns Engine</h2>
+        </header>
+
+        <!-- Main Content Layout -->
+        <main class="patterns-main-layout">
+
+            <!-- Sidebar: Pattern Selector -->
+            <aside class="patterns-sidebar card" data-aos="fade-up" data-aos-delay="100">
+                <div class="sidebar-header">
+                    <h4>Pattern Library</h4>
+                    <span class="pattern-count-badge" id="pattern-count">3 Patterns</span>
+                </div>
+                <div class="pattern-nav-list" id="pattern-nav-list">
+                    <!-- Nav buttons rendered via JS -->
+                </div>
+            </aside>
+
+            <!-- Right Area: Interactive Viewer -->
+            <section class="pattern-content-viewer card" data-aos="fade-up" data-aos-delay="200">
+
+                <!-- Chart Animation Stage -->
+                <div class="chart-stage-wrapper">
+                    <div class="chart-stage-header">
+                        <span class="bias-badge" id="pattern-bias">BULLISH REVERSAL</span>
+                        <button id="btn-replay-anim" class="btn-replay">
+                            <i data-lucide="rotate-ccw"></i> Replay Formation
+                        </button>
+                    </div>
+
+                    <!-- Pure CSS Animated Chart Canvas -->
+                    <div class="chart-canvas" id="chart-canvas">
+                        <div class="chart-grid-lines"></div>
+                        <div class="candles-flex-container" id="candles-container">
+                            <!-- Dynamic Animated Candle HTML Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pattern Information -->
+                <div class="pattern-info-body">
+                    <h1 id="pattern-title">Bullish Engulfing Pattern</h1>
+                    <p id="pattern-tagline" class="pattern-tagline">Strong buyers completely overpower seller momentum.
+                    </p>
+
+                    <hr class="patterns-divider">
+
+                    <div class="pattern-info-grid">
+                        <div class="info-block">
+                            <h4><i data-lucide="activity" class="text-blue"></i> Market Psychology</h4>
+                            <p id="pattern-psychology">Loading psychology...</p>
+                        </div>
+
+                        <div class="info-block">
+                            <h4><i data-lucide="target" class="text-green"></i> Trade Setup & Entry</h4>
+                            <p id="pattern-entry">Loading setup...</p>
+                        </div>
+                    </div>
+
+                    <div class="info-block full-width">
+                        <h4><i data-lucide="shield-alert" class="text-yellow"></i> Invalidations & Risk</h4>
+                        <ul id="pattern-invalidation-list" class="invalidation-list">
+                            <!-- Bullet points rendered via JS -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="../js/module/candlestick-patterns.js"></script>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        // Initialize Animations & Icons
+        AOS.init({ duration: 800, once: true });
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

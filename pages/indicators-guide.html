@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indicators & TradingView Guide | Trading Toolkit</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Animation Library (AOS - Animate On Scroll) -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components/indicators-guide.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-dark">
+
+    <div class="indicators-page-container">
+        <!-- Navigation Header -->
+        <header class="page-top-bar">
+            <a href="../index.html" class="btn-back-hub">
+                <i data-lucide="arrow-left"></i> Back to Hub
+            </a>
+            <h2><i data-lucide="line-chart" class="text-purple"></i> Indicators & TradingView Guide</h2>
+        </header>
+
+        <!-- Main Grid Layout -->
+        <main class="indicators-main-layout">
+
+            <!-- Sidebar: Indicator Library -->
+            <aside class="indicators-sidebar card" data-aos="fade-up" data-aos-delay="100">
+                <div class="sidebar-header">
+                    <h4>Indicator Library</h4>
+                    <span class="indicator-count-badge" id="indicator-count">3 Indicators</span>
+                </div>
+                <div class="indicator-nav-list" id="indicator-nav-list">
+                    <!-- Nav items rendered via JS -->
+                </div>
+            </aside>
+
+            <!-- Right Area: Visualizer & Setup Guide -->
+            <section class="indicator-content-viewer card" data-aos="fade-up" data-aos-delay="200">
+
+                <!-- TradingView Style Mock Display Stage -->
+                <div class="tv-mock-stage">
+                    <div class="tv-top-bar">
+                        <div class="tv-symbol-info">
+                            <span class="tv-symbol">BTC/USDT</span>
+                            <span class="tv-timeframe">4H</span>
+                        </div>
+                        <div class="tv-indicator-tag" id="tv-indicator-tag">RSI (14, close)</div>
+                    </div>
+
+                    <!-- Custom SVG Dynamic Indicator Chart Visualizer -->
+                    <div class="tv-chart-viewport" id="tv-chart-viewport">
+                        <!-- Rendered via JS -->
+                    </div>
+                </div>
+
+                <!-- Indicator Info Body -->
+                <div class="indicator-info-body">
+                    <h1 id="indicator-title">Relative Strength Index (RSI)</h1>
+                    <p id="indicator-tagline" class="indicator-tagline">Measures price velocity to spot overbought and
+                        oversold market conditions.</p>
+
+                    <hr class="indicators-divider">
+
+                    <div class="indicator-info-grid">
+                        <div class="info-block">
+                            <h4><i data-lucide="sliders" class="text-purple"></i> TradingView Recommended Setup</h4>
+                            <p id="indicator-settings">Loading setup...</p>
+                        </div>
+
+                        <div class="info-block">
+                            <h4><i data-lucide="zap" class="text-yellow"></i> Best Signal Trigger</h4>
+                            <p id="indicator-signals">Loading signals...</p>
+                        </div>
+                    </div>
+
+                    <div class="info-block full-width">
+                        <h4><i data-lucide="alert-octagon" class="text-red"></i> Common Beginner Traps</h4>
+                        <ul id="indicator-traps-list" class="traps-list">
+                            <!-- Bullet points rendered via JS -->
+                        </ul>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <script src="../js/module/indicators-guide.js"></script>
+
+    <!-- AOS Animation Library JS -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        // Initialize Animations & Icons
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+
+</html>

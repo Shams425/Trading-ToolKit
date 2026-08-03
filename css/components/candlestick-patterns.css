@@ -1,0 +1,315 @@
+/* Layout & Grid */
+.patterns-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
+.page-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.patterns-main-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+}
+
+/* Sidebar */
+.patterns-sidebar {
+    background: #1e2329;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 20px;
+    height: fit-content;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.sidebar-header h4 {
+    color: #fff;
+    font-size: 15px;
+}
+
+.pattern-count-badge {
+    background: rgba(255, 255, 255, 0.06);
+    color: #848e9c;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+.pattern-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pattern-nav-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.pattern-nav-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.pattern-nav-item.active {
+    background: rgba(14, 203, 129, 0.1);
+    border-color: #0ecb81;
+}
+
+.nav-pattern-title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.nav-pattern-bias {
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* Right Viewer Content */
+.pattern-content-viewer {
+    background: #1e2329;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 24px;
+}
+
+/* TradingView Style Canvas Stage */
+.chart-stage-wrapper {
+    background: #12161a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.chart-stage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.bias-badge {
+    background: rgba(14, 203, 129, 0.12);
+    color: #0ecb81;
+    border: 1px solid rgba(14, 203, 129, 0.3);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.btn-replay {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #d1d4dc;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.btn-replay:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+/* Canvas Area */
+.chart-canvas {
+    height: 220px;
+    width: 100%;
+    position: relative;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.candles-flex-container {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+/* CANDLESTICK ANIMATION ENGINE */
+.candle-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.wick {
+    width: 2px;
+    opacity: 0;
+    animation: drawWick 0.3s forwards ease-in-out;
+    animation-delay: var(--delay);
+}
+
+.candle-body {
+    width: 26px;
+    border-radius: 2px;
+    transform: scaleY(0);
+    animation: growBody 0.4s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation-delay: calc(var(--delay) + 0.15s);
+}
+
+/* Green Candle Colors */
+.green .candle-body,
+.hammer-green .candle-body {
+    background: #0ecb81;
+}
+
+.green .wick,
+.hammer-green .wick {
+    background: #0ecb81;
+}
+
+/* Red Candle Colors */
+.red .candle-body,
+.doji .candle-body {
+    background: #f6465d;
+}
+
+.red .wick,
+.doji .wick {
+    background: #f6465d;
+}
+
+/* KEYFRAME ANIMATIONS */
+@keyframes drawWick {
+    0% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes growBody {
+    0% {
+        transform: scaleY(0);
+    }
+
+    100% {
+        transform: scaleY(1);
+    }
+}
+
+/* Info Section Styling */
+.pattern-content-viewer h1 {
+    color: #fff;
+    font-size: 22px;
+    margin-bottom: 6px;
+}
+
+.pattern-tagline {
+    color: #0ecb81;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.patterns-divider {
+    border: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 20px 0;
+}
+
+.pattern-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.info-block h4 {
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.info-block p {
+    color: #848e9c;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.invalidation-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.invalidation-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #d1d4dc;
+    font-size: 13px;
+}
+
+.invalidation-list li i {
+    color: #f6465d;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+/* Color Helpers */
+.text-green {
+    color: #0ecb81;
+}
+
+.text-yellow {
+    color: #fcd535;
+}
+
+@media (max-width: 850px) {
+    .patterns-main-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .pattern-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
