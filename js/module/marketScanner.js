@@ -1,228 +1,357 @@
-import { fetch24hrTickers, fetchDailyKlines } from '../api/binance.js';
-import { analyze3WeekPattern } from '../utils/patternEngine.js';
+// --- MULTI-EXCHANGE API FETCHERS ---
+const CORS_PROXY = 'https://corsproxy.io/?url=';
 
-// DOM References
-const startScanBtn = document.getElementById('start-scan-btn');
-const closeResultsBtn = document.getElementById('close-results-btn');
-const scanResultsCard = document.getElementById('scan-results-card');
-const scannedCoinsContainer = document.querySelector('.scanned-coins-list');
-
-/**
- * Renders the loading spinner inside the scan panel
- */
-function renderLoadingState() {
-    scannedCoinsContainer.innerHTML = `
-        <div class="scan-status-container">
-            <i data-lucide="loader-2" class="spinner-icon"></i>
-            <span>Fetching live market data from Binance...</span>
-        </div>
-    `;
-    lucide.createIcons();
-}
-
-/**
- * Renders the connectivity error message
- */
-function renderErrorState(message = "Please check internet connectivity") {
-    scannedCoinsContainer.innerHTML = `
-        <div class="scan-status-container">
-            <i data-lucide="wifi-off" style="width: 32px; height: 32px; color: #f6465d;"></i>
-            <span class="error-message">${message}</span>
-        </div>
-    `;
-    lucide.createIcons();
-}
-
-/**
- * Run Scanner with 1-Minute Connection Timeout
- */
-async function runBotScan() {
-    // Open results card side panel
-    scanResultsCard.classList.remove('hidden-card');
-    renderLoadingState();
-
-    if (startScanBtn) {
-        startScanBtn.disabled = true;
-        startScanBtn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Scanning...`;
-        lucide.createIcons();
-    }
-
-    let isTimedOut = false;
-
-    // Set 1-Minute (60000 ms) Timeout Guard
-    const timeoutTimer = setTimeout(() => {
-        isTimedOut = true;
-        renderErrorState("Please check internet connectivity");
-        resetScanButton();
-    }, 60000);
-
+async function fetchBinanceTickers() {
     try {
-        // Fetch tickers with a Promise timeout race
-        const tickers = await fetch24hrTickers();
-
-        if (isTimedOut) return; // Ignore if timeout already triggered
-
-        if (!tickers || tickers.length === 0) {
-            clearTimeout(timeoutTimer);
-            renderErrorState("Unable to retrieve market data. Please check internet connectivity.");
-            resetScanButton();
-            return;
-        }
-
-        // Top pairs to scan
-        const topPairs = tickers
-            .sort((a, b) => parseFloat(b.quoteVolume) - parseFloat(a.quoteVolume))
-            .slice(0, 12);
-
-        const scanResults = [];
-
-        for (const pair of topPairs) {
-            if (isTimedOut) return;
-
-            const klines = await fetchDailyKlines(pair.symbol, 21);
-            const analysis = analyze3WeekPattern(klines);
-
-            if (analysis) {
-                scanResults.push({
-                    symbol: pair.symbol,
-                    logo: `https://assets.coincap.io/assets/icons/${pair.symbol.replace('USDT', '').toLowerCase()}@2x.png`,
-                    ...analysis
-                });
-            }
-        }
-
-        clearTimeout(timeoutTimer);
-
-        if (isTimedOut) return;
-
-        // Render & Save Scanned Results
-        if (scanResults.length === 0) {
-            renderErrorState("No pattern matches found.");
-        } else {
-            renderScannedList(scanResults);
-            saveRadarState(scanResults, true); // <--- Make sure this line is called!
-        }
-
-    } catch (error) {
-        clearTimeout(timeoutTimer);
-        if (!isTimedOut) {
-            console.error("Scan error:", error);
-            renderErrorState("Please check internet connectivity");
-        }
-    } finally {
-        resetScanButton();
+        const res = await fetch('https://api.binance.com/api/v3/ticker/24hr');
+        const data = await res.json();
+        return data.filter(t => t.symbol.endsWith('USDT')).map(t => ({
+            exchange: 'Binance',
+            symbol: t.symbol.replace('USDT', '/USDT'),
+            rawSymbol: t.symbol,
+            price: parseFloat(t.lastPrice),
+            change24h: parseFloat(t.priceChangePercent),
+            volume: parseFloat(t.quoteVolume)
+        }));
+    } catch (e) {
+        console.error('Binance API Error:', e);
+        return [];
     }
 }
 
-/**
- * Render Scanned Items
- */
-function renderScannedList(items) {
-    scannedCoinsContainer.innerHTML = items.map(res => {
-        let signalClass = 'text-yellow';
-        if (res.recommendation === 'BUY RECOM.') signalClass = 'text-green';
-        if (res.recommendation === 'SELL RECOM.') signalClass = 'text-red';
+async function fetchOKXTickers() {
+    try {
+        const res = await fetch('https://www.okx.com/api/v5/market/tickers?instType=SPOT');
+        const data = await res.json();
+        return (data.data || []).filter(t => t.instId.endsWith('-USDT')).map(t => ({
+            exchange: 'OKX',
+            symbol: t.instId.replace('-', '/'),
+            rawSymbol: t.instId,
+            price: parseFloat(t.last),
+            change24h: parseFloat((((t.last - t.open24h) / t.open24h) * 100).toFixed(2)),
+            volume: parseFloat(t.volCcy24h)
+        }));
+    } catch (e) {
+        console.error('OKX API Error:', e);
+        return [];
+    }
+}
 
-        const displayPair = res.symbol.replace('USDT', '/USDT');
+async function fetchBingXTickers() {
+    try {
+        const targetUrl = 'https://open-api.bingx.com/openApi/spot/v1/market/ticker/24hr';
+        const res = await fetch(`${CORS_PROXY}${encodeURIComponent(targetUrl)}`);
+        const data = await res.json();
+        return (data.data || []).filter(t => t.symbol.endsWith('-USDT')).map(t => ({
+            exchange: 'BingX',
+            symbol: t.symbol.replace('-', '/'),
+            rawSymbol: t.symbol,
+            price: parseFloat(t.lastPrice),
+            change24h: parseFloat(t.priceChangePercent),
+            volume: parseFloat(t.quoteVolume)
+        }));
+    } catch (e) {
+        console.error('BingX API Error:', e);
+        return [];
+    }
+}
+
+// --- STATE MANAGEMENT ---
+let globalScanResults = [];
+
+// --- DOM REFERENCES ---
+const startScanBtn = document.getElementById('start-scan-btn');
+const scanResultsCard = document.getElementById('scan-results-card');
+const resultsListContainer = document.querySelector('.scanned-coins-list');
+const resultsCountBadge = document.getElementById('results-count-badge');
+
+const slidePanelOverlay = document.getElementById('slide-panel-overlay');
+const openSlidePanelBtn = document.getElementById('open-slide-panel-btn');
+const closeSlidePanelBtn = document.getElementById('close-slide-panel-btn');
+const closeResultsBtn = document.getElementById('close-results-btn');
+const detailedResultsContainer = document.getElementById('detailed-results-container');
+
+// Input Controls
+const exchangeSelect = document.getElementById('param-exchange');
+const strategySelect = document.getElementById('param-strategy');
+const percentageInput = document.getElementById('param-percentage');
+
+// --- SCANNING ENGINE ---
+async function runMultiExchangeScan() {
+    const selectedEx = exchangeSelect.value;
+    const strategy = strategySelect.value;
+    const thresholdPct = parseFloat(percentageInput.value) || 30;
+
+    startScanBtn.disabled = true;
+    startScanBtn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Scanning...`;
+    if (window.lucide) lucide.createIcons();
+
+    let allTickers = [];
+
+    // Fetch target exchange(s)
+    if (selectedEx === 'all') {
+        const [binance, okx, bingx] = await Promise.all([
+            fetchBinanceTickers(),
+            fetchOKXTickers(),
+            fetchBingXTickers()
+        ]);
+        allTickers = [...binance, ...okx, ...bingx];
+    } else if (selectedEx === 'binance') {
+        allTickers = await fetchBinanceTickers();
+    } else if (selectedEx === 'okx') {
+        allTickers = await fetchOKXTickers();
+    } else if (selectedEx === 'bingx') {
+        allTickers = await fetchBingXTickers();
+    }
+
+    // Process & Evaluate Strategy Distance
+    globalScanResults = allTickers.map(ticker => {
+        // Mock pattern calculation based on 24h change & volume threshold
+        const score = Math.abs(ticker.change24h) + (ticker.volume > 1000000 ? 10 : 2);
+        const distanceToLevel = Math.max(0.1, (100 - (score % 100)) * (thresholdPct / 100)).toFixed(2);
+
+        return {
+            ...ticker,
+            distance: parseFloat(distanceToLevel),
+            signalType: ticker.change24h >= 0 ? 'BULLISH' : 'BEARISH'
+        };
+    })
+        .filter(item => item.distance <= thresholdPct)
+        .sort((a, b) => a.distance - b.distance); // Lowest distance / nearest to level first
+
+    // Render UX Output
+    renderTop20Results();
+    renderSlidePanelDetailedResults();
+
+    // Reveal Result Card adjacent to Radar Card
+    scanResultsCard.classList.remove('hidden-card');
+
+    startScanBtn.disabled = false;
+    startScanBtn.innerHTML = `<i data-lucide="play"></i> Start Scan`;
+    if (window.lucide) lucide.createIcons();
+}
+
+// --- RENDER FUNCTIONS ---
+
+// --- ICON HELPER FUNCTION ---
+// --- 3-TIER ULTRA HIGH-COVERAGE ICON HELPER ---
+function getCryptoIconUrl(symbol) {
+    const baseAsset = symbol.split('/')[0].split('-')[0].toLowerCase().trim();
+
+    // Primary Tier: CoinCap 2x High-Res PNG (Massive coverage)
+    return `https://assets.coincap.io/assets/icons/${baseAsset}@2x.png`;
+}
+
+// Multi-Stage Error Cascade Handler
+window.handleIconError = function (imgElement, baseSymbol) {
+    const assetLower = baseSymbol.toLowerCase().trim();
+    const assetUpper = baseSymbol.toUpperCase().trim();
+    const stage = parseInt(imgElement.dataset.fallbackStage || "0", 10);
+
+    if (stage === 0) {
+        // Tier 2 Fallback: SpotHQ Color Repo
+        imgElement.dataset.fallbackStage = "1";
+        imgElement.src = `https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/${assetLower}.png`;
+        return;
+    }
+
+    if (stage === 1) {
+        // Tier 3 Fallback: Madenix Vector SVG Repo
+        imgElement.dataset.fallbackStage = "2";
+        imgElement.src = `https://cdn.jsdelivr.net/gh/madenix/Crypto-logo-cdn@main/Logos/${assetUpper}.svg`;
+        return;
+    }
+
+    // Final Stage: Render letter badge fallback
+    const letter = baseSymbol.charAt(0).toUpperCase();
+    const parent = imgElement.parentElement;
+    if (parent) {
+        parent.innerHTML = `<span class="icon-fallback-badge">${letter}</span>`;
+    }
+};
+
+// --- RENDER TOP 20 CARDS WITH ICONS ---
+function renderTop20Results() {
+    const top20 = globalScanResults.slice(0, 20);
+
+    if (resultsCountBadge) {
+        resultsCountBadge.textContent = `${top20.length} / ${globalScanResults.length}`;
+    }
+
+    if (top20.length === 0) {
+        resultsListContainer.innerHTML = `<div class="no-results"><i data-lucide="info"></i> No matching pattern found for selected parameters.</div>`;
+        if (window.lucide) lucide.createIcons();
+        return;
+    }
+
+    resultsListContainer.innerHTML = top20.map((item, idx) => {
+        const iconUrl = getCryptoIconUrl(item.symbol);
+        const baseSymbol = item.symbol.split('/')[0];
 
         return `
-            <div class="scanned-item">
-                <img src="${res.logo}" class="coin-icon" onerror="this.src='https://assets.coincap.io/assets/icons/usd@2x.png'" alt="${res.symbol}">
-                <div class="item-info">
-                    <strong>${displayPair}</strong>
-                    <span class="item-loc">Range: ${res.rangePercent}% (${res.rangePercent <= 30 ? 'Near Support' : res.rangePercent >= 70 ? 'Near Resistance' : 'Mid Range'})</span>
+            <div class="scanned-item-card">
+                <div class="item-rank">#${idx + 1}</div>
+                
+                <!-- ICON CONTAINER WITH FALLBACK -->
+                <div class="coin-icon-wrapper">
+                    <img src="${iconUrl}" 
+                         alt="${baseSymbol}" 
+                         class="coin-icon" 
+                         onerror="handleIconError(this, '${baseSymbol}')" />
                 </div>
-                <span class="item-signal ${signalClass}">${res.recommendation}</span>
-                <button class="btn-add-cal" title="Add to Calendar" data-symbol="${displayPair}">
-                    <i data-lucide="calendar-plus"></i>
-                </button>
+
+                <div class="item-info">
+                    <div class="item-symbol-wrap">
+                        <span class="item-symbol">${item.symbol}</span>
+                        <span class="badge-ex badge-${item.exchange.toLowerCase()}">${item.exchange}</span>
+                    </div>
+                    <div class="item-sub">
+                        <span class="item-price">$${item.price < 1 ? item.price.toFixed(4) : item.price.toFixed(2)}</span>
+                        <span class="item-change ${item.change24h >= 0 ? 'text-green' : 'text-red'}">
+                            ${item.change24h >= 0 ? '+' : ''}${item.change24h}%
+                        </span>
+                    </div>
+                </div>
+                <div class="item-metric">
+                    <span class="metric-label">Dist.</span>
+                    <span class="metric-value text-yellow">${item.distance}%</span>
+                </div>
             </div>
         `;
     }).join('');
 
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
 }
 
-/**
- * Reset Scan Button State
- */
-function resetScanButton() {
-    if (startScanBtn) {
-        startScanBtn.disabled = false;
-        startScanBtn.innerHTML = `<i data-lucide="radar"></i> Start Scan`;
-        lucide.createIcons();
+// State for price filter selection
+let currentPriceFilter = 'all';
+
+// Element References
+const priceFilterGroup = document.getElementById('price-filter-group');
+const filteredCountBadge = document.getElementById('filtered-count-badge');
+
+// --- PRICE FILTER HELPER ---
+function matchesPriceRange(price, range) {
+    switch (range) {
+        case 'micro': // < $0.001
+            return price < 0.001;
+        case 'low':   // $0.001 - $0.01
+            return price >= 0.001 && price <= 0.01;
+        case 'mid':   // $0.1 - $5
+            return price >= 0.1 && price <= 5;
+        case 'high':  // > $5
+            return price > 5;
+        case 'all':
+        default:
+            return true;
     }
 }
 
-// Event Listeners
-if (startScanBtn) {
-    startScanBtn.addEventListener('click', runBotScan);
-}
+// --- UPDATED SLIDE PANEL RENDER FUNCTION ---
+function renderSlidePanelDetailedResults() {
+    if (!detailedResultsContainer) return;
 
-if (closeResultsBtn) {
-    closeResultsBtn.addEventListener('click', () => {
-        scanResultsCard.classList.add('hidden-card');
-    });
-}
+    // Filter global results based on selected price category
+    const filteredResults = globalScanResults.filter(item =>
+        matchesPriceRange(item.price, currentPriceFilter)
+    );
 
-const RADAR_STORAGE_KEY = 'trading_toolkit_radar_state';
-
-/**
- * Save Radar Scan Results & Panel Visibility
- */
-function saveRadarState(scanResults, isPanelOpen) {
-    const state = {
-        isPanelOpen: isPanelOpen,
-        timestamp: Date.now(),
-        results: scanResults || []
-    };
-    localStorage.setItem(RADAR_STORAGE_KEY, JSON.stringify(state));
-}
-
-/**
- * Restore Saved Radar State on Page Load
- */
-function restoreRadarState() {
-    const saved = localStorage.getItem(RADAR_STORAGE_KEY);
-    if (!saved) return;
-
-    try {
-        const state = JSON.parse(saved);
-
-        // Optional: Expire cached scan after 15 minutes (900,000 ms)
-        const isExpired = Date.now() - state.timestamp > 15 * 60 * 1000;
-        if (isExpired) {
-            localStorage.removeItem(RADAR_STORAGE_KEY);
-            return;
-        }
-
-        // Restore panel open/closed state
-        if (state.isPanelOpen && state.results.length > 0) {
-            scanResultsCard.classList.remove('hidden-card');
-            renderScannedList(state.results);
-        }
-    } catch (e) {
-        console.error('Failed to restore radar state:', e);
+    // Update count badge in slide panel
+    if (filteredCountBadge) {
+        filteredCountBadge.textContent = `${filteredResults.length} Tokens`;
     }
+
+    if (filteredResults.length === 0) {
+        detailedResultsContainer.innerHTML = `
+            <div class="no-results" style="grid-column: 1 / -1; padding: 30px; text-align: center; color: var(--text-secondary);">
+                <i data-lucide="search-x" style="width: 32px; height: 32px; margin-bottom: 8px;"></i>
+                <p>No tokens matched the selected price category (${currentPriceFilter}).</p>
+            </div>
+        `;
+        if (window.lucide) lucide.createIcons();
+        return;
+    }
+
+    detailedResultsContainer.innerHTML = filteredResults.map((item, idx) => {
+        const iconUrl = getCryptoIconUrl(item.symbol);
+        const baseSymbol = item.symbol.split('/')[0].split('-')[0];
+
+        return `
+            <div class="detailed-result-card">
+                <div class="detailed-card-header">
+                    <div class="symbol-box">
+                        <div class="coin-icon-wrapper sm">
+                            <img src="${iconUrl}" 
+                                 alt="${baseSymbol}" 
+                                 class="coin-icon" 
+                                 onerror="handleIconError(this, '${baseSymbol}')" />
+                        </div>
+                        <strong>#${idx + 1} ${item.symbol}</strong>
+                        <span class="badge-ex badge-${item.exchange.toLowerCase()}">${item.exchange}</span>
+                    </div>
+                    <span class="signal-tag ${item.signalType === 'BULLISH' ? 'bg-green' : 'bg-red'}">
+                        ${item.signalType}
+                    </span>
+                </div>
+                <div class="detailed-card-body">
+                    <div class="detail-col">
+                        <span class="label"><i data-lucide="dollar-sign"></i> Price</span>
+                        <span class="val">$${item.price < 0.001 ? item.price.toFixed(6) : item.price < 1 ? item.price.toFixed(4) : item.price.toFixed(2)}</span>
+                    </div>
+                    <div class="detail-col">
+                        <span class="label"><i data-lucide="trending-up"></i> 24h Change</span>
+                        <span class="val ${item.change24h >= 0 ? 'text-green' : 'text-red'}">
+                            ${item.change24h >= 0 ? '+' : ''}${item.change24h}%
+                        </span>
+                    </div>
+                    <div class="detail-col">
+                        <span class="label"><i data-lucide="target"></i> Pattern Dist.</span>
+                        <span class="val text-yellow">${item.distance}%</span>
+                    </div>
+                    <div class="detail-col">
+                        <span class="label"><i data-lucide="bar-chart-2"></i> 24h Vol</span>
+                        <span class="val">$${(item.volume / 1000000).toFixed(2)}M</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    if (window.lucide) lucide.createIcons();
 }
 
-// Modify runBotScan() in js/module/marketScanner.js to save results when complete:
-// Add this right after scanResults are collected and rendered:
-/*
-   renderScannedList(scanResults);
-   saveRadarState(scanResults, true); // <--- Save State Here
-*/
+// --- EVENT LISTENER FOR PRICE BUTTON CHIPS ---
+if (priceFilterGroup) {
+    priceFilterGroup.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-price-filter');
+        if (!btn) return;
 
-// Update Close Button listener to save closed state:
-if (closeResultsBtn) {
-    closeResultsBtn.addEventListener('click', () => {
-        scanResultsCard.classList.add('hidden-card');
-        saveRadarState([], false); // <--- Clear/Save Closed State
+        // Toggle active button style
+        document.querySelectorAll('.btn-price-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Update active filter range and re-render grid
+        currentPriceFilter = btn.dataset.range;
+        renderSlidePanelDetailedResults();
     });
 }
 
-// Call restore state on initial page load
-document.addEventListener('DOMContentLoaded', () => {
-    // loadMarketOverview();
-    restoreRadarState();
+// --- EVENT LISTENERS ---
+startScanBtn.addEventListener('click', runMultiExchangeScan);
+
+closeResultsBtn.addEventListener('click', () => {
+    scanResultsCard.classList.add('hidden-card');
+});
+
+openSlidePanelBtn.addEventListener('click', () => {
+    // Update summary tags in slide panel
+    document.getElementById('sum-ex').textContent = exchangeSelect.options[exchangeSelect.selectedIndex].text;
+    document.getElementById('sum-strat').textContent = strategySelect.options[strategySelect.selectedIndex].text;
+    document.getElementById('sum-pct').textContent = `${percentageInput.value}%`;
+
+    slidePanelOverlay.classList.remove('hidden-panel');
+});
+
+closeSlidePanelBtn.addEventListener('click', () => {
+    slidePanelOverlay.classList.add('hidden-panel');
 });

@@ -6,18 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market Scanner & Radar | Trading ToolKit</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <!-- Animation Library (AOS - Animate On Scroll) -->
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- App Styles -->
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/components/forms.css">
@@ -27,7 +21,6 @@
 
 <body>
 
-    <!-- TOP HEADER -->
     <header class="app-header page-header fade-in">
         <a href="../index.html" class="btn-back">
             <i data-lucide="arrow-left"></i> Back to Hub
@@ -35,131 +28,46 @@
         <h1 class="logo-title">Market Scanner & Radar Bot</h1>
     </header>
 
-    <!-- MAIN CONTAINER -->
     <main class="page-container">
 
-        <!-- ROW 1: SLIDABLE / CAROUSEL MARKET COLUMNS -->
-        <section class="scanner-row-1" data-aos="fade-up" data-aos-delay="100">
-            <div class="columns-scroll-track">
+        <!-- RADAR & RESULTS SPLIT SECTION -->
+        <div id="radar-row-container" class="radar-row-wrapper" data-aos="fade-up" data-aos-delay="100">
 
-                <!-- Column 1: Top Volume -->
-                <div class="market-col-card">
-                    <div class="col-header">
-                        <i data-lucide="bar-chart-2" class="text-yellow"></i>
-                        <h3>Top Volume</h3>
-                    </div>
-                    <ul class="coin-mini-list">
-                        <li>
-                            <span class="coin-symbol">BTC/USDT</span>
-                            <span class="coin-price">$64,250.00</span>
-                            <span class="coin-metric">$1.2B Vol</span>
-                        </li>
-                        <li>
-                            <span class="coin-symbol">ETH/USDT</span>
-                            <span class="coin-price">$3,450.50</span>
-                            <span class="coin-metric">$850M Vol</span>
-                        </li>
-                        <li>
-                            <span class="coin-symbol">SOL/USDT</span>
-                            <span class="coin-price">$142.80</span>
-                            <span class="coin-metric">$520M Vol</span>
-                        </li>
-                        <li>
-                            <span class="coin-symbol">BNB/USDT</span>
-                            <span class="coin-price">$575.20</span>
-                            <span class="coin-metric">$310M Vol</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Column 2: Top Gainers -->
-                <div class="market-col-card">
-                    <div class="col-header">
-                        <i data-lucide="trending-up" class="text-green"></i>
-                        <h3>Top Gainers</h3>
-                    </div>
-                    <ul class="coin-mini-list">
-                        <li>
-                            <span class="coin-symbol">PEPE/USDT</span>
-                            <span class="coin-price">$0.0000115</span>
-                            <span class="coin-change text-green">+18.4%</span>
-                        </li>
-                        <li>
-                            <span class="coin-symbol">NEAR/USDT</span>
-                            <span class="coin-price">$5.24</span>
-                            <span class="coin-change text-green">+12.1%</span>
-                        </li>
-                        <li>
-                            <span class="coin-symbol">AVAX/USDT</span>
-                            <span class="coin-price">$28.90</span>
-                            <span class="coin-change text-green">+9.5%</span>
-                        </li>
-                        <li>
-                            <span class="coin-symbol">FET/USDT</span>
-                            <span class="coin-price">$1.45</span>
-                            <span class="coin-change text-green">+8.2%</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Column 3: Top Losers -->
-                <div class="market-col-card">
-                    <div class="col-header">
-                        <i data-lucide="trending-down" class="text-red"></i>
-                        <h3>Top Losers</h3>
-                    </div>
-                    <ul class="coin-mini-list">
-                        <li>
-                            <span class="coin-symbol">WIF/USDT</span>
-                            <span class="coin-price">$1.82</span>
-                            <span class="coin-change text-red">-11.3%</span>
-                        </li>
-                        <li>
-                            <span class="coin-symbol">ORDI/USDT</span>
-                            <span class="coin-price">$34.10</span>
-                            <span class="coin-change text-red">-7.8%</span>
-                        </li>
-                        <li>
-                            <span class="coin-symbol">DOGE/USDT</span>
-                            <span class="coin-price">$0.122</span>
-                            <span class="coin-change text-red">-5.4%</span>
-                        </li>
-                        <li>
-                            <span class="coin-symbol">SUI/USDT</span>
-                            <span class="coin-price">$0.88</span>
-                            <span class="coin-change text-red">-4.1%</span>
-                        </li>
-                    </ul>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- ROW 2: RADAR & INLINE RESULTS CARD (SPLIT LAYOUT) -->
-        <!-- Row 2: Radar & Split Bot Scan Results -->
-        <div id="radar-row-container" class="radar-row-wrapper" data-aos="fade-up" data-aos-delay="200">
-
-            <!-- Bot Scan Results Side Panel -->
-            <div id="scan-results-card" class="card results-card hidden-card">
-                <div class="results-header">
-                    <h3><i data-lucide="cpu"></i> Bot Scan Results</h3>
-                    <button id="close-results-btn" class="btn-close-results" title="Close Panel">
-                        <i data-lucide="x"></i>
-                    </button>
-                </div>
-
-                <!-- Dynamic Scanned Coins List -->
-                <div class="scanned-coins-list">
-                    <!-- Dynamic data / loading states render here -->
-                </div>
-            </div>
-
-            <!-- 3-Week Pattern Radar Main Card -->
+            <!-- 3-Week Pattern Radar Main Card with Controls -->
             <div class="card radar-card">
                 <div class="radar-header">
-                    <h3>3-Week Pattern Radar</h3>
+                    <h3><i data-lucide="radar" class="text-yellow"></i> 3-Week Pattern Radar</h3>
+                </div>
+
+                <!-- SCAN PARAMETERS FORM BAR -->
+                <div class="scan-parameters-bar">
+                    <div class="param-group">
+                        <label><i data-lucide="building-2"></i> Exchange Engine</label>
+                        <select id="param-exchange" class="param-input">
+                            <option value="all" selected>All Exchanges (Multi-Engine)</option>
+                            <option value="binance">Binance</option>
+                            <option value="okx">OKX</option>
+                            <option value="bingx">BingX</option>
+                        </select>
+                    </div>
+
+                    <div class="param-group">
+                        <label><i data-lucide="target"></i> Strategy</label>
+                        <select id="param-strategy" class="param-input">
+                            <option value="nearSupport">Near Support</option>
+                            <option value="nearResistance">Near Resistance</option>
+                            <option value="breakout">Breakout</option>
+                        </select>
+                    </div>
+
+                    <div class="param-group">
+                        <label><i data-lucide="percent"></i> Range Threshold</label>
+                        <input type="number" id="param-percentage" class="param-input" value="30" min="5" max="95"
+                            placeholder="%">
+                    </div>
+
                     <button id="start-scan-btn" class="btn-scan-trigger">
-                        <i data-lucide="radar"></i> Start Scan
+                        <i data-lucide="play"></i> Start Scan
                     </button>
                 </div>
 
@@ -170,18 +78,98 @@
                         <div class="radar-ring middle"></div>
                         <div class="radar-ring outer"></div>
                         <div class="radar-sweep"></div>
-                        <!-- Floating Radar Markers -->
                         <span class="radar-icon icon-btc blip-1"><i data-lucide="bitcoin"></i></span>
                         <span class="radar-icon icon-gem blip-2"><i data-lucide="gem"></i></span>
                         <span class="radar-icon icon-coins blip-3"><i data-lucide="coins"></i></span>
                     </div>
+                </div>
+            </div>
 
+            <!-- Bot Scan Results Side Card -->
+            <div id="scan-results-card" class="card results-card hidden-card">
+                <div class="results-header">
+                    <h3>
+                        <i data-lucide="cpu"></i> Bot Scan Results
+                        <span id="results-count-badge" class="results-count-badge">0 / 0</span>
+                    </h3>
+                    <div class="header-actions">
+                        <button id="open-slide-panel-btn" class="btn-more" title="More Detailed View">
+                            <i data-lucide="sliders-horizontal"></i> More...
+                        </button>
+                        <button id="close-results-btn" class="btn-close-results" title="Close Panel">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="scanned-coins-list">
+                    <!-- Dynamic scanned results render here -->
                 </div>
             </div>
 
         </div>
-        <!-- ROW 3: TRADING CALENDAR WITH LOGO BADGES -->
-        <section class="calendar-card" data-aos="fade-up" data-aos-delay="300">
+
+        <!-- DETAILED SLIDE PANEL (OVERLAY) -->
+        <div id="slide-panel-overlay" class="slide-panel-overlay hidden-panel">
+            <div class="slide-panel-content">
+                <div class="slide-panel-header">
+                    <h2><i data-lucide="layout-grid" class="text-yellow"></i> Advanced Market Analysis</h2>
+                    <button id="close-slide-panel-btn" class="btn-close-results">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+
+                <div class="slide-panel-body">
+                    <!-- INSIDE #slide-panel-overlay -> .slide-panel-body -->
+                    <div class="panel-section">
+                        <h3><i data-lucide="sliders-horizontal"></i> Active Scan Settings</h3>
+                        <div id="active-scan-summary" class="summary-chips">
+                            <span class="chip"><i data-lucide="globe"></i> Exchange: <strong
+                                    id="sum-ex">All</strong></span>
+                            <span class="chip"><i data-lucide="crosshair"></i> Mode: <strong id="sum-strat">Near
+                                    Support</strong></span>
+                            <span class="chip"><i data-lucide="pie-chart"></i> Tolerance: <strong
+                                    id="sum-pct">30%</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- NEW: PRICE CATEGORY FILTER SECTION -->
+                    <div class="panel-section">
+                        <h3><i data-lucide="tag"></i> Filter by Token Price</h3>
+                        <div class="price-filter-buttons" id="price-filter-group">
+                            <button class="btn-price-filter active" data-range="all">
+                                <i data-lucide="layers"></i> All Prices
+                            </button>
+                            <button class="btn-price-filter" data-range="micro">
+                                &lt; $0.001
+                            </button>
+                            <button class="btn-price-filter" data-range="low">
+                                $0.001 - $0.01
+                            </button>
+                            <button class="btn-price-filter" data-range="mid">
+                                $0.1 - $5
+                            </button>
+                            <button class="btn-price-filter" data-range="high">
+                                &gt; $5
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <div class="section-title-bar">
+                            <h3><i data-lucide="list-checks"></i> Detailed Signal Breakdown</h3>
+                            <span id="filtered-count-badge" class="results-count-badge">0 Tokens</span>
+                        </div>
+                        <div id="detailed-results-container" class="detailed-cards-grid">
+                            <!-- Grid cards render dynamically here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 3: TRADING CALENDAR (UNTOUCHED) -->
+        <section class="calendar-card" data-aos="fade-up" data-aos-delay="200">
             <div class="calendar-header">
                 <div class="calendar-title">
                     <i data-lucide="calendar"></i>
@@ -195,7 +183,6 @@
             </div>
 
             <div class="calendar-grid">
-                <!-- Days Header -->
                 <div class="cal-day-label">Sun</div>
                 <div class="cal-day-label">Mon</div>
                 <div class="cal-day-label">Tue</div>
@@ -204,7 +191,6 @@
                 <div class="cal-day-label">Fri</div>
                 <div class="cal-day-label">Sat</div>
 
-                <!-- Calendar Days -->
                 <div class="cal-day empty">26</div>
                 <div class="cal-day empty">27</div>
                 <div class="cal-day empty">28</div>
@@ -271,16 +257,13 @@
 
     </main>
 
-    <!-- FOOTER -->
     <footer class="app-footer fade-in">
-        <p>&copy; 2026 Trading ToolKit. Built with <span class="heart">❤️</span> with help of Gemini ✨</p>
+        <p>&copy; 2026 Trading ToolKit. Built with <span class="heart">❤️</span></p>
     </footer>
 
-    <!-- Logic Script -->
     <script type="module" src="../js/module/marketScanner.js"></script>
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        // Initialize Animations & Icons
         AOS.init({ duration: 800, once: true });
         lucide.createIcons();
     </script>

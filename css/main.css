@@ -16,6 +16,56 @@
     padding: 0;
 }
 
+/* ==========================================================================
+   GLOBAL CUSTOM SCROLLBAR RULE (Webkit + Firefox)
+   ========================================================================== */
+
+/* 1. WebKit Browsers (Chrome, Edge, Safari, Brave) */
+::-webkit-scrollbar {
+    width: 6px;
+    /* Thin vertical scrollbar */
+    height: 6px;
+    /* Thin horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    /* Subtle dark background track */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    /* Sleek semi-transparent thumb */
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-yellow, #fcd535);
+    /* Glows Yellow on Hover! */
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* 2. Firefox Support */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================================================
+   PANEL & CARD INNER SCROLL ADJUSTMENTS
+   ========================================================================== */
+
+/* Gives extra breathing room so the custom scrollbar doesn't clip the grid cards */
+.slide-panel-body,
+.scanned-coins-list {
+    padding-right: 6px;
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
