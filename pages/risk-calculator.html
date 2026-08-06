@@ -93,8 +93,17 @@
 
             <!-- Updated Risk Calculator Card -->
             <div class="card calc-card">
+                <!-- Inside calc-card -> calc-header -->
                 <div class="calc-header">
-                    <h3><i data-lucide="calculator"></i> Risk & Position Size Calculator</h3>
+                    <h3><i data-lucide="calculator"></i>Calculator</h3>
+
+                    <!-- Trading Mode Toggle Switch -->
+                    <div class="mode-toggle-group">
+                        <span class="toggle-label">Mode:</span>
+                        <button type="button" id="btn-mode-spot" class="btn-mode active">Spot (Cash)</button>
+                        <button type="button" id="btn-mode-futures" class="btn-mode">Futures (Leverage)</button>
+                    </div>
+
                     <div class="pnl-badge-container">
                         <span class="pnl-label">Net Realized PnL:</span>
                         <span id="total-pnl-display" class="pnl-value neutral">$0.00</span>
@@ -138,12 +147,12 @@
 
                     <div class="calc-actions">
                         <button type="button" id="btn-calculate" class="btn-primary">
-                            <i data-lucide="calculator"></i> Calculate Risk
+                            <i data-lucide="calculator"></i> Calculate Risk & Position Size
                         </button>
                     </div>
                 </form>
 
-                <!-- Calculation Summary Cards -->
+                <!-- Calculation Summary Cards (Now 4 Cards) -->
                 <div class="calc-results-grid">
                     <div class="result-box">
                         <span class="label">Position Size</span>
@@ -154,8 +163,12 @@
                         <strong id="calc-risk-amount" class="text-red">$0.00</strong>
                     </div>
                     <div class="result-box">
+                        <span class="label">Expected Profit</span>
+                        <strong id="calc-expected-profit" class="text-green">$0.00</strong>
+                    </div>
+                    <div class="result-box">
                         <span class="label">Risk / Reward</span>
-                        <strong id="calc-rr-ratio" class="text-green">0.00 : 1</strong>
+                        <strong id="calc-rr-ratio" class="text-yellow">1 : 0.00</strong>
                     </div>
                 </div>
             </div>

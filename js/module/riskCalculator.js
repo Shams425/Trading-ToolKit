@@ -15,6 +15,7 @@ const riskPercentInput = document.getElementById('risk-percent');
 const entryPriceInput = document.getElementById('entry-price');
 const stopLossInput = document.getElementById('stop-loss');
 const takeProfitInput = document.getElementById('take-profit');
+const expectedProfitEl = document.getElementById('calc-expected-profit');
 
 const positionSizeEl = document.getElementById('calc-position-size');
 const riskAmountEl = document.getElementById('calc-risk-amount');
@@ -30,6 +31,26 @@ const toastContainer = document.getElementById('toast-container');
 /**
  * 1. Perform Risk Calculation (Triggered ON BUTTON CLICK only)
  */
+let tradingMode = 'spot'; // Default to 'spot' or 'futures'
+
+// DOM References for Mode Buttons
+const btnModeSpot = document.getElementById('btn-mode-spot');
+const btnModeFutures = document.getElementById('btn-mode-futures');
+
+// Mode Switch Handlers
+btnModeSpot?.addEventListener('click', () => {
+    tradingMode = 'spot';
+    btnModeSpot.classList.add('active');
+    btnModeFutures?.classList.remove('active');
+});
+
+btnModeFutures?.addEventListener('click', () => {
+    tradingMode = 'futures';
+    btnModeFutures.classList.add('active');
+    btnModeSpot?.classList.remove('active');
+});
+
+// --- UPDATED CALCULATE FUNCTION ---
 function handleCalculateClick() {
     const accountSize = parseFloat(accountSizeInput?.value) || 0;
     const riskPercent = parseFloat(riskPercentInput?.value) || 0;
@@ -38,30 +59,43 @@ function handleCalculateClick() {
     const takeProfit = parseFloat(takeProfitInput?.value) || 0;
 
     if (accountSize <= 0 || riskPercent <= 0 || entryPrice <= 0 || stopLoss <= 0) {
-        alert('Please fill out Account Balance, Risk %, Entry Price, and Stop Loss with valid positive numbers.');
+        alert('Please fill out Account Balance, Risk %, Entry Price, and Stop Loss.');
         return;
     }
 
-    // Save current inputs to LocalStorage
     saveInputsToStorage();
 
-    // Risk Calculation Math
-    const maxRiskAmount = accountSize * (riskPercent / 100);
+    const maxRiskTarget = accountSize * (riskPercent / 100);
     const riskPerUnit = Math.abs(entryPrice - stopLoss);
+    const riskPercentPerUnit = riskPerUnit / entryPrice;
 
     if (riskPerUnit === 0) {
         alert('Entry price and Stop Loss cannot be identical.');
         return;
     }
 
-    const positionUnits = maxRiskAmount / riskPerUnit;
-    const totalPositionSize = positionUnits * entryPrice;
+    let calculatedPosSize = maxRiskTarget / riskPercentPerUnit;
+    let actualPositionSize = calculatedPosSize;
+    let actualRiskAmount = maxRiskTarget;
 
-    let rrRatio = '0.00 : 1';
-    let rewardPerUnit = 0;
+    // --- SPOT MODE LOGIC ---
+    if (tradingMode === 'spot' && calculatedPosSize > accountSize) {
+        // Cap position size to max cash balance ($40)
+        actualPositionSize = accountSize;
+        // Actual risk reduced accordingly
+        actualRiskAmount = actualPositionSize * riskPercentPerUnit;
+    }
+
+    const positionUnits = actualPositionSize / entryPrice;
+
+    let rrRatio = '1 : 0.00';
+    let expectedProfit = 0;
+
     if (takeProfit > 0) {
-        rewardPerUnit = Math.abs(takeProfit - entryPrice);
-        rrRatio = `${(rewardPerUnit / riskPerUnit).toFixed(2)} : 1`;
+        const rewardPerUnit = Math.abs(takeProfit - entryPrice);
+        expectedProfit = positionUnits * rewardPerUnit;
+        const ratioVal = (rewardPerUnit / riskPerUnit).toFixed(2);
+        rrRatio = `1 : ${ratioVal}`;
     }
 
     // Cache calculation result
@@ -69,18 +103,19 @@ function handleCalculateClick() {
         entryPrice,
         stopLoss,
         takeProfit,
-        maxRiskAmount,
+        maxRiskAmount: actualRiskAmount,
+        expectedProfit,
         positionUnits,
-        totalPositionSize,
+        totalPositionSize: actualPositionSize,
         rrRatio
     };
 
     // Update Output Displays
-    if (positionSizeEl) positionSizeEl.innerText = `$${totalPositionSize.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    if (riskAmountEl) riskAmountEl.innerText = `$${maxRiskAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (positionSizeEl) positionSizeEl.innerText = `$${actualPositionSize.toFixed(2)}`;
+    if (riskAmountEl) riskAmountEl.innerText = `$${actualRiskAmount.toFixed(2)}`;
+    if (expectedProfitEl) expectedProfitEl.innerText = `+$${expectedProfit.toFixed(2)}`;
     if (rrRatioEl) rrRatioEl.innerText = rrRatio;
 
-    // Trigger Slide-in Toast Alert
     showLogToJournalToast();
 }
 

@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/components/forms.css">
     <link rel="stylesheet" href="../css/components/cards.css">
+    <link rel="stylesheet" href="../css/components/calander.css">
     <link rel="stylesheet" href="../css/components/scanner.css">
 </head>
 
@@ -170,89 +171,74 @@
 
         <!-- ROW 3: TRADING CALENDAR (UNTOUCHED) -->
         <section class="calendar-card" data-aos="fade-up" data-aos-delay="200">
-            <div class="calendar-header">
-                <div class="calendar-title">
-                    <i data-lucide="calendar"></i>
-                    <h3>Signal & Target Calendar</h3>
+            <!-- CALENDAR CONTAINER -->
+            <div class="calendar-wrapper">
+
+                <!-- Top Bar: Exchange Tabs & Date Controls -->
+                <div class="calendar-topbar">
+                    <div class="exchange-tabs">
+                        <button type="button" class="tab-btn active" data-exchange="binance">
+                            <span class="dot binance"></span> Binance
+                        </button>
+                        <button type="button" class="tab-btn" data-exchange="okx">
+                            <span class="dot okx"></span> OKX
+                        </button>
+                        <button type="button" class="tab-btn" data-exchange="bingx">
+                            <span class="dot bingx"></span> BingX
+                        </button>
+                    </div>
+
+                    <div class="calendar-controls">
+                        <button type="button" id="cal-prev-btn" class="icon-btn"><i
+                                data-lucide="chevron-left"></i></button>
+                        <h3 id="cal-month-title">August 2026</h3>
+                        <button type="button" id="cal-next-btn" class="icon-btn"><i
+                                data-lucide="chevron-right"></i></button>
+                    </div>
                 </div>
-                <div class="calendar-month-selector">
-                    <button class="btn-cal-nav"><i data-lucide="chevron-left"></i></button>
-                    <span id="calendar-month-label">August 2026</span>
-                    <button class="btn-cal-nav"><i data-lucide="chevron-right"></i></button>
+
+                <!-- Calendar Grid Headers -->
+                <div class="calendar-weekdays">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+
+                <!-- Dynamic 3-Exchange Carousel Track -->
+                <div class="calendar-carousel-viewport">
+                    <div class="calendar-carousel-track" id="calendar-track">
+                        <!-- Binance Grid -->
+                        <div class="calendar-grid-page" id="grid-binance"></div>
+                        <!-- OKX Grid -->
+                        <div class="calendar-grid-page" id="grid-okx"></div>
+                        <!-- BingX Grid -->
+                        <div class="calendar-grid-page" id="grid-bingx"></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="calendar-grid">
-                <div class="cal-day-label">Sun</div>
-                <div class="cal-day-label">Mon</div>
-                <div class="cal-day-label">Tue</div>
-                <div class="cal-day-label">Wed</div>
-                <div class="cal-day-label">Thu</div>
-                <div class="cal-day-label">Fri</div>
-                <div class="cal-day-label">Sat</div>
+            <!-- SLIDE-OUT PANEL / DRAWER -->
+            <div class="calendar-drawer-overlay" id="drawer-overlay"></div>
+            <aside class="calendar-drawer" id="calendar-drawer">
+                <div class="drawer-header">
+                    <div>
+                        <h4 id="drawer-date-title">Date Details</h4>
+                        <span id="drawer-exchange-tag" class="badge">Binance</span>
+                    </div>
+                    <button type="button" id="drawer-close-btn" class="close-btn"><i data-lucide="x"></i></button>
+                </div>
 
-                <div class="cal-day empty">26</div>
-                <div class="cal-day empty">27</div>
-                <div class="cal-day empty">28</div>
-                <div class="cal-day empty">29</div>
-                <div class="cal-day empty">30</div>
-                <div class="cal-day empty">31</div>
-                <div class="cal-day">1</div>
-
-                <div class="cal-day">2</div>
-                <div class="cal-day">3</div>
-                <div class="cal-day">4</div>
-                <div class="cal-day has-signal">
-                    <span class="day-num">5</span>
-                    <div class="calendar-logo-badges">
-                        <img src="https://assets.coingecko.com/coins/images/1/small/bitcoin.png"
-                            class="cal-coin-icon tag-buy" title="BTC Long Signal">
-                        <img src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png"
-                            class="cal-coin-icon tag-buy" title="BNB Long Signal">
+                <div class="drawer-body">
+                    <p class="drawer-subtitle">Pattern Signals & Events</p>
+                    <div id="drawer-tokens-list" class="drawer-tokens-list">
+                        <!-- Dynamic Token Event Cards will render here -->
                     </div>
                 </div>
-                <div class="cal-day">6</div>
-                <div class="cal-day">7</div>
-                <div class="cal-day">8</div>
-
-                <div class="cal-day">9</div>
-                <div class="cal-day">10</div>
-                <div class="cal-day">11</div>
-                <div class="cal-day">12</div>
-                <div class="cal-day has-signal">
-                    <span class="day-num">13</span>
-                    <div class="calendar-logo-badges">
-                        <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png"
-                            class="cal-coin-icon tag-sell" title="SOL Target Hit">
-                    </div>
-                </div>
-                <div class="cal-day">14</div>
-                <div class="cal-day">15</div>
-
-                <div class="cal-day">16</div>
-                <div class="cal-day">17</div>
-                <div class="cal-day">18</div>
-                <div class="cal-day">19</div>
-                <div class="cal-day">20</div>
-                <div class="cal-day">21</div>
-                <div class="cal-day">22</div>
-
-                <div class="cal-day">23</div>
-                <div class="cal-day">24</div>
-                <div class="cal-day">25</div>
-                <div class="cal-day">26</div>
-                <div class="cal-day">27</div>
-                <div class="cal-day">28</div>
-                <div class="cal-day">29</div>
-
-                <div class="cal-day">30</div>
-                <div class="cal-day">31</div>
-                <div class="cal-day empty">1</div>
-                <div class="cal-day empty">2</div>
-                <div class="cal-day empty">3</div>
-                <div class="cal-day empty">4</div>
-                <div class="cal-day empty">5</div>
-            </div>
+            </aside>
         </section>
 
     </main>
@@ -261,6 +247,7 @@
         <p>&copy; 2026 Trading ToolKit. Built with <span class="heart">❤️</span></p>
     </footer>
 
+    <script src="../js/module/calander.js"></script>
     <script type="module" src="../js/module/marketScanner.js"></script>
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
